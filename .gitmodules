@@ -1,0 +1,3 @@
+[submodule "libsleef"]
+	path = libsleef
+	url = https://github.com/shibatch/sleef.git
