@@ -8,9 +8,9 @@
 #include "vector.hh"
 
 template <>
-struct Vector<__m128> {
+struct Vector<SSE> {
   typedef __m128 TYPE;
-  typedef float LOWER_TYPE;
+  typedef Scalar LOWER_TYPE;
   static size_t const N_FLOAT = 4;
 
   static void erff(float *a) {

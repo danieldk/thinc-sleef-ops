@@ -5,13 +5,17 @@
 #include <cmath>
 #include <cstddef>
 
+struct AVX {};
+struct SSE {};
+struct Scalar {};
+
 template <class T>
 class Vector {};
 
 template<>
-struct Vector<float> {
+struct Vector<Scalar> {
   typedef float TYPE;
-  typedef float LOWER_TYPE;
+  typedef Scalar LOWER_TYPE;
   static size_t const N_FLOAT = 1;
 
   static void erff(float *a) {

@@ -8,9 +8,9 @@
 #include "vector.hh"
 
 template <>
-struct Vector<__m256> {
+struct Vector<AVX> {
   typedef __m256 TYPE;
-  typedef __m128 LOWER_TYPE;
+  typedef SSE LOWER_TYPE;
   static size_t const N_FLOAT = 8;
 
   static void erff(float *a) {

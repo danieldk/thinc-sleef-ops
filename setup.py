@@ -9,9 +9,14 @@ from Cython.Compiler import Options
 # http://docs.cython.org/en/latest/src/userguide/source_files_and_compilation.html#compiler-options
 Options.docstrings = True
 
-MOD_NAMES = [
+SLEEF_EXT = Extension(
     "thinc_sleef_ops.sleef",
-]
+    ["thinc_sleef_ops/sleef.pyx", "thinc_sleef_ops/array_scalar.cpp", "thinc_sleef_ops/array_sse.cpp", "thinc_sleef_ops/array_avx.cpp"],
+    language="c++",
+    include_dirs=[numpy.get_include()],
+    extra_compile_args=["-std=c++11"],
+    extra_objects=["libsleef.a"]
+)
 
 COMPILE_OPTIONS = {
     "msvc": ["/Ox", "/EHsc"],
@@ -50,19 +55,7 @@ def setup_package():
     include_dirs = [
         numpy.get_include(),
     ]
-    ext_modules = []
-    for name in MOD_NAMES:
-        mod_path = name.replace(".", "/") + ".pyx"
-        ext = Extension(
-            name,
-            [mod_path],
-            language="c++",
-            include_dirs=include_dirs,
-            extra_compile_args=["-std=c++11"],
-            # Fixme: don't hardcode.
-            extra_objects=["libsleef.a"]
-        )
-        ext_modules.append(ext)
+    ext_modules = [SLEEF_EXT]
     print("Cythonizing sources")
     ext_modules = cythonize(ext_modules, compiler_directives=COMPILER_DIRECTIVES)
 
