@@ -1,1 +1,1 @@
-from .sleef import *
+from .array_ops import *

@@ -1,10 +1,11 @@
 #ifndef VECTOR_SSE_HH
 #define VECTOR_SSE_HH
 
+#include <sleef.h>
+
 #include <functional>
 #include <cstddef>
 
-#include "../sleef/sleef.h"
 #include "vector.hh"
 
 template <>

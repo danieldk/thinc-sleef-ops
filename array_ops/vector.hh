@@ -10,7 +10,9 @@ struct SSE {};
 struct Scalar {};
 
 template <class T>
-class Vector {};
+struct Vector {
+  typedef Scalar LOWER_TYPE;
+};
 
 template<>
 struct Vector<Scalar> {
