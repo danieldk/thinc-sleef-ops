@@ -23,7 +23,8 @@ struct Vector<AVX512> {
   }
 
 private:
-  static void with_load_store(std::function<__m512(__m512)> f, float *a) {
+  template <class F>
+  static void with_load_store(F f, float *a) {
     TYPE val = _mm512_loadu_ps(a);
     val = f(val);
     _mm512_storeu_ps(a, val);

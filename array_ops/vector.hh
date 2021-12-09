@@ -21,11 +21,11 @@ struct Vector<Scalar> {
   typedef Scalar LOWER_TYPE;
   static size_t const N_FLOAT = 1;
 
-  static void erff(float *a) {
+  static void erff(float *a) noexcept {
     *a = std::erf(*a);
   }
 
-  static void expf(float *a) {
+  static void expf(float *a) noexcept {
     *a = std::exp(*a);
   }
 };

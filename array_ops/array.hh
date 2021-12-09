@@ -6,14 +6,16 @@
 
 #include "vector.hh"
 
+#include "arrayi.hh"
+
 template <class T>
-struct Array {
+struct Array: ArrayI {
   static size_t const N_FLOAT = Vector<T>::N_FLOAT;
   typedef typename Vector<T>::LOWER_TYPE LOWER_TYPE;
 
-  static void erff(float *a, size_t n);
+  void erff(float *a, size_t n) noexcept;
 
-  static void expf(float *a, size_t n);
+  void expf(float *a, size_t n) noexcept;
 };
 
 #endif // ARRAY_HH

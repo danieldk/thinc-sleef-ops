@@ -18,21 +18,24 @@
 #include <vector_avx512.hh>
 #endif
 
+#include "arrayi.hh"
+
 template <class T>
-struct Array {
+struct Array : ArrayI {
   static size_t CONST N_FLOAT = Vector<T>::N_FLOAT;
   typedef typename Vector<T>::LOWER_TYPE LOWER_TYPE;
 
-  static void erff(float *a, size_t n) {
-    apply_elementwise(Vector<T>::erff, Array<LOWER_TYPE>::erff, a, n);
+  void erff(float *a, size_t n) {
+    apply_elementwise(Vector<T>::erff, [](float* a, size_t n) { return Array<LOWER_TYPE>().erff(a, n); }, a, n);
   }
 
-  static void expf(float *a, size_t n) {
-    apply_elementwise(Vector<T>::expf, Array<LOWER_TYPE>::expf, a, n);
+  void expf(float *a, size_t n) {
+    apply_elementwise(Vector<T>::expf, [](float* a, size_t n) { return Array<LOWER_TYPE>().expf(a, n); }, a, n);
   }
 
 private:
-  static void apply_elementwise(std::function<void(float *)> f, std::function<void(float *, size_t)> f_rest, float *a, size_t n) {
+  template <class F, class G>
+  static void apply_elementwise(F f, G f_rest, float *a, size_t n) {
     size_t upper = n - (n % N_FLOAT);
     for (float *cur = a; cur != a + upper; cur += N_FLOAT) {
       f(cur);
