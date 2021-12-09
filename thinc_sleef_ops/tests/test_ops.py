@@ -37,3 +37,8 @@ def test_erff(ops):
         ),
         atol=1e-4,
     )
+
+
+def test_tanh(ops):
+    a = np.arange(-10, 10, 0.5, dtype=np.float32)
+    assert np.allclose(ops.tanh(a), np.tanh(a))

@@ -22,6 +22,10 @@ struct Vector<SSE> {
     with_load_store(Sleef_expf4_u10, a);
   }
 
+  static void tanhf(float *a) noexcept {
+    with_load_store(Sleef_tanhf4_u10, a);
+  }
+
 private:
   template <class F>
   static void with_load_store(F f, float *a) noexcept {

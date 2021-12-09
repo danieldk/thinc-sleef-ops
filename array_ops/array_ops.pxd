@@ -134,6 +134,7 @@ cdef extern from "arrayi.hh":
      cdef cppclass ArrayI:
          void erff(float *a, size_t n)
          void expf(float *a, size_t n)
+         void tanhf(float *a, size_t n)
 
 cdef extern from "array.hh":
      cdef cppclass Array[T]:
@@ -157,6 +158,4 @@ cdef class FloatArray:
 
 
 cdef class ArrayOps:
-  cpdef erff(self, float[:] a)
-  cpdef expf(self, float[:] a)
   cdef unique_ptr[ArrayI] array

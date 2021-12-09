@@ -22,6 +22,10 @@ struct Vector<AVX512> {
     with_load_store(Sleef_expf16_u10, a);
   }
 
+  static void tanhf(float *a) {
+    with_load_store(Sleef_tanhf16_u10, a);
+  }
+
 private:
   template <class F>
   static void with_load_store(F f, float *a) {

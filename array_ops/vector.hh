@@ -5,6 +5,8 @@
 #include <cmath>
 #include <cstddef>
 
+#include <sleef.h>
+
 struct AVX {};
 struct AVX512 {};
 struct SSE {};
@@ -27,6 +29,10 @@ struct Vector<Scalar> {
 
   static void expf(float *a) noexcept {
     *a = std::exp(*a);
+  }
+
+  static void tanhf(float *a) noexcept {
+    *a = Sleef_tanhf_u10(*a);
   }
 };
 

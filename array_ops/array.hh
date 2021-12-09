@@ -16,6 +16,8 @@ struct Array: ArrayI {
   void erff(float *a, size_t n) noexcept;
 
   void expf(float *a, size_t n) noexcept;
+
+  void tanhf(float *a, size_t n) noexcept;
 };
 
 #endif // ARRAY_HH

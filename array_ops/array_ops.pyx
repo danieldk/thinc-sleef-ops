@@ -25,17 +25,17 @@ cdef class ArrayOps:
     def erf(self, a: float[:], in_place: bool=False):
         if not in_place:
             a = a.copy()
-        self.erff(a)
+        deref(self.array).erff(&a[0], len(a))
         return a
 
     def exp(self, a: float[:], in_place: bool=False):
         if not in_place:
             a = a.copy()
-        self.expf(a)
+        deref(self.array).expf(&a[0], len(a))
         return a
 
-    cpdef erff(self, float[:] a):
-        deref(self.array).erff(&a[0], len(a))
-
-    cpdef expf(self, float[:] a):
-        deref(self.array).expf(&a[0], len(a))
+    def tanh(self, a: float[:], in_place: bool=False):
+        if not in_place:
+            a = a.copy()
+        deref(self.array).tanhf(&a[0], len(a))
+        return a
