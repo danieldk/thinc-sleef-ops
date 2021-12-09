@@ -5,11 +5,6 @@
 #include <cstddef>
 
 #include "vector.hh"
-#include "vector_sse.hh"
-
-#if defined(__AVX__)
-#include "vector_avx.hh"
-#endif
 
 template <class T>
 struct Array {

@@ -15,6 +15,9 @@ cdef extern from "array.hh":
      cdef cppclass AVX:
          pass
 
+     cdef cppclass AVX512:
+         pass
+
 cdef class FloatArray:
     cdef Array[Scalar] array
 
@@ -25,4 +28,5 @@ cdef class ArrayOps:
   cdef Array[Scalar] scalar_array
   cdef Array[SSE] sse_array
   cdef Array[AVX] avx_array
-  cdef Array[AVX] array
+  cdef Array[AVX512] avx512_array
+  cdef Array[SSE] array

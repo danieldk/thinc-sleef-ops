@@ -14,6 +14,10 @@
 #include <vector_avx.hh>
 #endif
 
+#if defined(__AVX512F__)
+#include <vector_avx512.hh>
+#endif
+
 template <class T>
 struct Array {
   static size_t CONST N_FLOAT = Vector<T>::N_FLOAT;

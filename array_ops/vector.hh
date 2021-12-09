@@ -6,6 +6,7 @@
 #include <cstddef>
 
 struct AVX {};
+struct AVX512 {};
 struct SSE {};
 struct Scalar {};
 
