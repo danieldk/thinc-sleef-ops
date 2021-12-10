@@ -15,6 +15,7 @@ struct Scalar {};
 template <class T>
 struct Vector {
   typedef Scalar LOWER_TYPE;
+  static size_t const N_FLOAT = 1;
 };
 
 template<>
