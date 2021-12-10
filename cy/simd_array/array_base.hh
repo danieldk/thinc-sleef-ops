@@ -1,12 +1,12 @@
-#ifndef ARRAYI_H_
-#define ARRAYI_H_
+#ifndef ARRAY_BASE_HH
+#define ARRAY_BASE_HH
 
-struct ArrayI {
-  inline ArrayI() {}
-  virtual ~ArrayI() {}
+struct ArrayBase {
+  inline ArrayBase() {}
+  virtual ~ArrayBase() {}
   virtual void erff(float *a, size_t n) noexcept = 0;
   virtual void expf(float *a, size_t n) noexcept = 0;
   virtual void tanhf(float *a, size_t n) noexcept = 0;
 };
 
-#endif // ARRAYI_H_
+#endif // ARRAY_BASE_HH

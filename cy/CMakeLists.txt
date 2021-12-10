@@ -20,11 +20,17 @@ add_subdirectory(../sleef ${CMAKE_BINARY_DIR}/sleef)
 set_property(TARGET sleef PROPERTY FOLDER "dependencies")
 link_directories(${CMAKE_BINARY_DIR}/sleef/lib)
 
-set_source_files_properties(array_avx.cpp PROPERTIES COMPILE_FLAGS -mavx)
-set_source_files_properties(array_avx512.cpp PROPERTIES COMPILE_FLAGS -mavx512f)
+# Fixme: split instruction-set specific files by arch.
+
+set_source_files_properties(simd_array/array_avx.cpp PROPERTIES COMPILE_FLAGS -mavx)
+set_source_files_properties(simd_array/array_avx512.cpp PROPERTIES COMPILE_FLAGS -mavx512f)
 
 add_cython_target(sleef_ops CXX)
-add_library(sleef_ops MODULE ${sleef_ops} array_scalar.cpp array_avx.cpp array_avx512.cpp array_sse.cpp)
+add_library(sleef_ops MODULE ${sleef_ops}
+  simd_array/array_scalar.cpp
+  simd_array/array_avx.cpp
+  simd_array/array_avx512.cpp
+  simd_array/array_sse.cpp)
 target_link_libraries(sleef_ops sleef)
 python_extension_module(sleef_ops)
 

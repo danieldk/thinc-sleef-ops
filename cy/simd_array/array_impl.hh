@@ -4,24 +4,24 @@
 #include <functional>
 #include <cstddef>
 
-#include "vector.hh"
+#include "../simd_vector/vector.hh"
 
 #if defined(__SSE__)
-#include <vector_sse.hh>
+#include "../simd_vector/vector_sse.hh"
 #endif
 
 #if defined(__AVX__)
-#include <vector_avx.hh>
+#include "simd_vector/vector_avx.hh"
 #endif
 
 #if defined(__AVX512F__)
-#include <vector_avx512.hh>
+#include "simd_vector/vector_avx512.hh"
 #endif
 
-#include "arrayi.hh"
+#include "array_base.hh"
 
 template <class T>
-struct Array : ArrayI {
+struct Array : ArrayBase {
   static size_t CONST N_FLOAT = Vector<T>::N_FLOAT;
   typedef typename Vector<T>::LOWER_TYPE LOWER_TYPE;
 
