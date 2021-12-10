@@ -16,4 +16,4 @@ endif()
 
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 
-add_subdirectory(array_ops)
+add_subdirectory(cy)
