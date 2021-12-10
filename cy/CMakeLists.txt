@@ -27,6 +27,7 @@ set_source_files_properties(simd_array/array_avx512.cpp PROPERTIES COMPILE_FLAGS
 
 add_cython_target(sleef_ops CXX)
 add_library(sleef_ops MODULE ${sleef_ops}
+  simd_array/array.cpp
   simd_array/array_scalar.cpp
   simd_array/array_avx.cpp
   simd_array/array_avx512.cpp
