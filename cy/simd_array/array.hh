@@ -4,12 +4,12 @@
 #include <functional>
 #include <cstddef>
 
-#include "vector.hh"
+#include "../simd_vector/vector.hh"
 
-#include "arrayi.hh"
+#include "array_base.hh"
 
 template <class T>
-struct Array: ArrayI {
+struct Array: ArrayBase {
   static size_t const N_FLOAT = Vector<T>::N_FLOAT;
   typedef typename Vector<T>::LOWER_TYPE LOWER_TYPE;
 
