@@ -5,6 +5,7 @@
 
 #include <functional>
 #include <cstddef>
+#include <cstring>
 
 #include "vector.hh"
 
@@ -14,24 +15,35 @@ struct Vector<AVX> {
   typedef SSE LOWER_TYPE;
   static size_t const N_FLOAT = 8;
 
-  static void erff(float *a) {
-    with_load_store(Sleef_erff8_u10, a);
+  static void erff(float *a, size_t n) {
+    with_load_store(Sleef_erff8_u10, a, n);
   }
 
-  static void expf(float *a) {
-    with_load_store(Sleef_expf8_u10, a);
+  static void expf(float *a, size_t n) {
+    with_load_store(Sleef_expf8_u10, a, n);
   }
 
-  static void tanhf(float *a) {
-    with_load_store(Sleef_tanhf8_u10, a);
+  static void tanhf(float *a, size_t n) {
+    with_load_store(Sleef_tanhf8_u10, a, n);
   }
 
 private:
   template <class F>
-  static void with_load_store(F f, float *a) {
-    TYPE val = _mm256_loadu_ps(a);
+  static void with_load_store(F f, float *a, size_t n) {
+    float buf[N_FLOAT - 1];
+    float *b = a;
+    if (n < N_FLOAT) {
+      b = reinterpret_cast<float *>(&buf);
+      memcpy(b, a, n * sizeof(float));
+    }
+
+    TYPE val = _mm256_loadu_ps(b);
     val = f(val);
-    _mm256_storeu_ps(a, val);
+    _mm256_storeu_ps(b, val);
+
+    if (n < N_FLOAT) {
+      memcpy(a, b, n * sizeof(float));
+    }
   }
 };
 

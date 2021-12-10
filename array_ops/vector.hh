@@ -23,15 +23,15 @@ struct Vector<Scalar> {
   typedef Scalar LOWER_TYPE;
   static size_t const N_FLOAT = 1;
 
-  static void erff(float *a) noexcept {
+  static void erff(float *a, size_t) noexcept {
     *a = std::erf(*a);
   }
 
-  static void expf(float *a) noexcept {
+  static void expf(float *a, size_t) noexcept {
     *a = std::exp(*a);
   }
 
-  static void tanhf(float *a) noexcept {
+  static void tanhf(float *a, size_t) noexcept {
     *a = Sleef_tanhf_u10(*a);
   }
 };
