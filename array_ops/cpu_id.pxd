@@ -13,6 +13,7 @@ cdef extern from "libcpuid.h":
     int cpuid_get_raw_data(cpu_raw_data_t *)
     const char *cpu_feature_str(cpu_feature_t feature)
     int cpu_identify(cpu_raw_data_t *, cpu_id_t *)
+    const char *cpuid_error();
     int cpuid_present()
 
     ctypedef enum cpu_feature_t:

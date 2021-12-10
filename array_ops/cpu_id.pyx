@@ -3,16 +3,16 @@ cdef class CPUID:
         self._features = set()
 
         if cpuid_present() == 0:
-            return
+            raise ValueError(f"CPUID instruction is not available")
 
         cdef cpu_raw_data_t cpu_raw_data
         cdef cpu_id_t cpu_id
 
         if cpuid_get_raw_data(&cpu_raw_data) < 0:
-            return
+            raise ValueError(f"Cannot get raw CPU data: {cpuid_error().decode('ascii')}")
 
         if cpu_identify(&cpu_raw_data, &cpu_id) < 0:
-            return
+            raise ValueError(f"Cannot get raw CPU data: {cpuid_error().decode('ascii')}")
 
         self._populate_features(cpu_id)
 
