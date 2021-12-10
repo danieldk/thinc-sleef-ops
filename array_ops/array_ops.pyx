@@ -16,7 +16,7 @@ cdef class ArrayOps:
             return
 
         if cpu_id.flags[int(CPU_FEATURE_AVX512F)] == 1:
-            self.array.reset(new Array[SSE]())
+            self.array.reset(new Array[AVX512]())
         elif cpu_id.flags[int(CPU_FEATURE_AVX)] == 1:
             self.array.reset(new Array[AVX]())
         elif cpu_id.flags[int(CPU_FEATURE_SSE)] == 1:
