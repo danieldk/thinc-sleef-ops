@@ -24,5 +24,5 @@ cdef extern from "array.hh":
      cdef cppclass AVX512:
          pass
 
-cdef class ArrayOps:
+cdef class SleefOps:
   cdef unique_ptr[ArrayI] array

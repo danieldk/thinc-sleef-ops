@@ -6,7 +6,7 @@ import thinc_sleef_ops
 
 @pytest.fixture
 def ops():
-    return thinc_sleef_ops.ArrayOps()
+    return thinc_sleef_ops.SleefOps()
 
 
 def test_exp(ops):

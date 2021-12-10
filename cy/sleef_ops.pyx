@@ -2,7 +2,7 @@ from cython.operator cimport dereference as deref
 
 from .cpu_id import CPUID
 
-cdef class ArrayOps:
+cdef class SleefOps:
     def __init__(self):
         self.array.reset(new Array[Scalar]())
         features = CPUID()
