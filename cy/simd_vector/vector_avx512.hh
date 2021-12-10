@@ -12,7 +12,7 @@ template <>
 struct Vector<AVX512> {
   typedef __m512 TYPE;
   typedef AVX LOWER_TYPE;
-  static size_t const N_FLOAT = 8;
+  static size_t const N_FLOAT = 16;
 
   static void erff(float *a) {
     with_load_store(Sleef_erff16_u10, a);

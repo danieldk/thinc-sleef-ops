@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.11.0)
 project(thinc_sleef_ops)
 
+set (CMAKE_CXX_STANDARD 11)
+
 find_package(PythonExtensions REQUIRED)
 find_package(Cython REQUIRED)
 find_package(NumPy REQUIRED)

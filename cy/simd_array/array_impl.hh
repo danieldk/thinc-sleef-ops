@@ -22,7 +22,7 @@
 
 template <class T>
 struct Array : ArrayBase {
-  static size_t CONST N_FLOAT = Vector<T>::N_FLOAT;
+  static size_t const N_FLOAT = Vector<T>::N_FLOAT;
   typedef typename Vector<T>::LOWER_TYPE LOWER_TYPE;
 
   void erff(float *a, size_t n) noexcept {
