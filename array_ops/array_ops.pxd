@@ -24,9 +24,5 @@ cdef extern from "array.hh":
      cdef cppclass AVX512:
          pass
 
-cdef class FloatArray:
-    cdef Array[Scalar] array
-
-
 cdef class ArrayOps:
   cdef unique_ptr[ArrayI] array
