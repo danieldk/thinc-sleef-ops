@@ -1,11 +1,11 @@
 #ifndef ARRAY_HH
 #define ARRAY_HH
 
-#include <functional>
 #include <cstddef>
+#include <memory>
+#include <string>
 
 #include "../simd_vector/vector.hh"
-
 #include "array_base.hh"
 
 template <class T>
@@ -19,5 +19,14 @@ struct Array: ArrayBase {
 
   void tanhf(float *a, size_t n) noexcept;
 };
+
+enum CPUFeature {
+  FEATURE_AVX,
+  FEATURE_AVX512F,
+  FEATURE_SSE2,
+  FEATURE_SCALAR
+};
+
+std::unique_ptr<ArrayBase> array_for_instruction_set(CPUFeature feature);
 
 #endif // ARRAY_HH

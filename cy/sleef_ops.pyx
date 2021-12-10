@@ -4,15 +4,15 @@ from .cpu_id import CPUID
 
 cdef class SleefOps:
     def __init__(self):
-        self.array.reset(new Array[Scalar]())
         features = CPUID()
-
         if "avx512f" in features.features:
-            self.array.reset(new Array[AVX512]())
+            self.array = array_for_instruction_set(FEATURE_AVX512F)
         elif "avx" in features.features:
-            self.array.reset(new Array[AVX]())
+            self.array = array_for_instruction_set(FEATURE_AVX)
         elif "sse2" in features.features:
-            self.array.reset(new Array[SSE]())
+            self.array = array_for_instruction_set(FEATURE_SSE2)
+        else:
+            self.array = array_for_instruction_set(FEATURE_SCALAR)
 
     def erf(self, a: float[:], in_place: bool=False):
         if not in_place:

@@ -1,7 +1,6 @@
 #ifndef ARRAY_IMPL_H_
 #define ARRAY_IMPL_H_
 
-#include <functional>
 #include <cstddef>
 
 #include "../simd_vector/vector.hh"
@@ -50,6 +49,5 @@ private:
     }
   }
 };
-
 
 #endif // ARRAY_IMPL_H_
