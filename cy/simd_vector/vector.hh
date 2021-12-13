@@ -9,6 +9,7 @@
 
 struct AVX {};
 struct AVX512 {};
+struct NEON {};
 struct SSE {};
 struct Scalar {};
 

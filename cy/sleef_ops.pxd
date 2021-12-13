@@ -10,11 +10,13 @@ cdef extern from "simd_array/array_base.hh":
          void tanhf(float *a, size_t n)
 
 cdef extern from "simd_array/dispatch.hh":
+     # Note: keep in sync with dispatch.hh
      cpdef enum InstructionSet:
-         INSTRUCTION_SET_SCALAR
-         INSTRUCTION_SET_SSE2,
          INSTRUCTION_SET_AVX,
          INSTRUCTION_SET_AVX512F,
+         INSTRUCTION_SET_NEON,
+         INSTRUCTION_SET_SCALAR,
+         INSTRUCTION_SET_SSE2
 
      unordered_set[InstructionSet] instruction_sets() except +
      unique_ptr[ArrayBase] create_array() except +

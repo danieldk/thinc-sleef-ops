@@ -42,6 +42,10 @@ std::unordered_set<InstructionSet> instruction_sets() {
 std::unordered_set<InstructionSet> instruction_sets() {
   std::unordered_set<InstructionSet> features;
   features.insert(INSTRUCTION_SET_SCALAR);
+
+  // All AArch64 CPUs support NEON.
+  features.insert(INSTRUCTION_SET_NEON);
+
   return features;
 }
 
@@ -64,6 +68,9 @@ std::unique_ptr<ArrayBase> create_array() {
   if (features.find(INSTRUCTION_SET_AVX) != features.end())
     return create_array_for_instruction_set(INSTRUCTION_SET_AVX);
 
+  if (features.find(INSTRUCTION_SET_NEON) != features.end())
+    return create_array_for_instruction_set(INSTRUCTION_SET_NEON);
+
   if (features.find(INSTRUCTION_SET_SSE2) != features.end())
     return create_array_for_instruction_set(INSTRUCTION_SET_SSE2);
 
@@ -80,6 +87,11 @@ std::unique_ptr<ArrayBase> create_array_for_instruction_set(InstructionSet featu
     #if defined(COMPILER_SUPPORTS_AVX512F)
     case INSTRUCTION_SET_AVX512F:
       return std::unique_ptr<ArrayBase>(new Array<AVX512>());
+    #endif
+
+    #if defined(COMPILER_SUPPORTS_NEON)
+    case INSTRUCTION_SET_NEON:
+      return std::unique_ptr<ArrayBase>(new Array<NEON>());
     #endif
 
     #if defined(COMPILER_SUPPORTS_AVX512F)

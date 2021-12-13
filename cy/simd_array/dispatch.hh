@@ -8,11 +8,13 @@
 #include "../simd_vector/vector.hh"
 #include "array_base.hh"
 
+// Note: keep in sync with sleef_ops.pxd
 enum InstructionSet {
+  INSTRUCTION_SET_AVX,
+  INSTRUCTION_SET_AVX512F,
+  INSTRUCTION_SET_NEON,
   INSTRUCTION_SET_SCALAR,
   INSTRUCTION_SET_SSE2,
-  INSTRUCTION_SET_AVX,
-  INSTRUCTION_SET_AVX512F
 };
 
 

@@ -5,6 +5,10 @@
 
 #include "../simd_vector/vector.hh"
 
+#if defined(__ARM_NEON)
+#include "../simd_vector/vector_neon.hh"
+#endif
+
 #if defined(__SSE__)
 #include "../simd_vector/vector_sse.hh"
 #endif
