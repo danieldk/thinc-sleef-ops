@@ -1,18 +1,14 @@
+from contextlib import contextmanager
 from cython.operator cimport dereference as deref
-
-from .cpu_id import CPUID
 
 cdef class SleefOps:
     def __init__(self):
-        features = CPUID()
-        if "avx512f" in features.features:
-            self.array = array_for_instruction_set(FEATURE_AVX512F)
-        elif "avx" in features.features:
-            self.array = array_for_instruction_set(FEATURE_AVX)
-        elif "sse2" in features.features:
-            self.array = array_for_instruction_set(FEATURE_SSE2)
-        else:
-            self.array = array_for_instruction_set(FEATURE_SCALAR)
+        self.array.swap(create_array())
+
+    @staticmethod
+    def instruction_sets():
+        return instruction_sets()
+
 
     def erf(self, a: float[:], in_place: bool=False):
         if not in_place:
@@ -31,3 +27,9 @@ cdef class SleefOps:
             a = a.copy()
         deref(self.array).tanhf(&a[0], len(a))
         return a
+
+@contextmanager
+def with_cpu_feature(InstructionSet feature):
+    ops = SleefOps()
+    ops.array.swap(create_array_for_instruction_set(feature))
+    yield ops

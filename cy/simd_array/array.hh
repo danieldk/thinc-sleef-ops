@@ -20,13 +20,4 @@ struct Array: ArrayBase {
   void tanhf(float *a, size_t n) noexcept;
 };
 
-enum CPUFeature {
-  FEATURE_AVX,
-  FEATURE_AVX512F,
-  FEATURE_SSE2,
-  FEATURE_SCALAR
-};
-
-std::unique_ptr<ArrayBase> array_for_instruction_set(CPUFeature feature);
-
 #endif // ARRAY_HH
