@@ -15,18 +15,34 @@ add_subdirectory(../sleef ${CMAKE_BINARY_DIR}/sleef)
 set_property(TARGET sleef PROPERTY FOLDER "dependencies")
 link_directories(${CMAKE_BINARY_DIR}/sleef/lib)
 
-# Fixme: split instruction-set specific files by arch.
-
-set_source_files_properties(simd_array/array_avx.cpp PROPERTIES COMPILE_FLAGS -mavx)
-set_source_files_properties(simd_array/array_avx512.cpp PROPERTIES COMPILE_FLAGS -mavx512f)
+get_directory_property(COMPILER_SUPPORTS_AVX DIRECTORY ../sleef DEFINITION COMPILER_SUPPORTS_AVX)
+get_directory_property(COMPILER_SUPPORTS_AVX512F DIRECTORY ../sleef DEFINITION COMPILER_SUPPORTS_AVX512F)
+get_directory_property(COMPILER_SUPPORTS_SSE2 DIRECTORY ../sleef DEFINITION COMPILER_SUPPORTS_SSE2)
 
 add_cython_target(sleef_ops CXX)
-add_library(sleef_ops MODULE ${sleef_ops}
+
+set(SIMD_ARRAY_SOURCES
   simd_array/array_scalar.cpp
-  simd_array/array_avx.cpp
-  simd_array/array_avx512.cpp
-  simd_array/array_sse.cpp
   simd_array/dispatch.cpp)
+
+if(COMPILER_SUPPORTS_SSE2)
+  list(APPEND SIMD_ARRAY_SOURCES simd_array/array_sse.cpp)
+  add_compile_definitions(COMPILER_SUPPORTS_SSE2)
+endif()
+
+if(COMPILER_SUPPORTS_AVX)
+  list(APPEND SIMD_ARRAY_SOURCES simd_array/array_avx.cpp)
+  set_source_files_properties(simd_array/array_avx.cpp PROPERTIES COMPILE_FLAGS -mavx)
+  add_compile_definitions(COMPILER_SUPPORTS_AVX)
+endif()
+
+if(COMPILER_SUPPORTS_AVX512F)
+  list(APPEND SIMD_ARRAY_SOURCES simd_array/array_avx512.cpp)
+  set_source_files_properties(simd_array/array_avx512.cpp PROPERTIES COMPILE_FLAGS -mavx512f)
+  add_compile_definitions(COMPILER_SUPPORTS_AVX512F)
+endif()
+
+add_library(sleef_ops MODULE ${sleef_ops} ${SIMD_ARRAY_SOURCES})
 target_link_libraries(sleef_ops sleef)
 target_link_libraries(sleef_ops cpuid)
 python_extension_module(sleef_ops)

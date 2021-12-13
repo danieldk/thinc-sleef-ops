@@ -3,10 +3,11 @@
 #include <string>
 #include <unordered_set>
 
-#include <libcpuid.h>
-
 #include "array.hh"
 #include "dispatch.hh"
+
+#if defined(__x86_64__) || defined(_M_X64)
+#include <libcpuid.h>
 
 std::unordered_set<InstructionSet> instruction_sets() {
   if (cpuid_present() == 0)
@@ -22,7 +23,6 @@ std::unordered_set<InstructionSet> instruction_sets() {
     throw std::runtime_error(std::string("Cannot identify CPU: ") + cpuid_error());
 
   std::unordered_set<InstructionSet> features;
-
   features.insert(INSTRUCTION_SET_SCALAR);
 
   if (cpu_id.flags[CPU_FEATURE_SSE2])
@@ -36,6 +36,24 @@ std::unordered_set<InstructionSet> instruction_sets() {
 
   return features;
 }
+
+#elif defined(__aarch64__) || defined(_M_ARM64)
+
+std::unordered_set<InstructionSet> instruction_sets() {
+  std::unordered_set<InstructionSet> features;
+  features.insert(INSTRUCTION_SET_SCALAR);
+  return features;
+}
+
+#else
+
+std::unordered_set<InstructionSet> instruction_sets() {
+  std::unordered_set<InstructionSet> features;
+  features.insert(INSTRUCTION_SET_SCALAR);
+  return features;
+}
+
+#endif
 
 std::unique_ptr<ArrayBase> create_array() {
   auto features = instruction_sets();
@@ -54,12 +72,21 @@ std::unique_ptr<ArrayBase> create_array() {
 
 std::unique_ptr<ArrayBase> create_array_for_instruction_set(InstructionSet feature) {
   switch (feature) {
+    #if defined(COMPILER_SUPPORTS_AVX)
     case INSTRUCTION_SET_AVX:
       return std::unique_ptr<ArrayBase>(new Array<AVX>());
+    #endif
+
+    #if defined(COMPILER_SUPPORTS_AVX512F)
     case INSTRUCTION_SET_AVX512F:
       return std::unique_ptr<ArrayBase>(new Array<AVX512>());
+    #endif
+
+    #if defined(COMPILER_SUPPORTS_AVX512F)
     case INSTRUCTION_SET_SSE2:
       return std::unique_ptr<ArrayBase>(new Array<SSE>());
+    #endif
+
     case INSTRUCTION_SET_SCALAR:
       return std::unique_ptr<ArrayBase>(new Array<Scalar>());
     default:
