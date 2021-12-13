@@ -11,11 +11,6 @@ add_subdirectory(../libcpuid ${CMAKE_BINARY_DIR}/libcpuid)
 set_property(TARGET cpuid PROPERTY FOLDER "dependencies")
 link_directories(${CMAKE_BINARY_DIR}/libcpuid/lib)
 
-add_cython_target(cpu_id CXX)
-add_library(cpu_id MODULE ${cpu_id})
-target_link_libraries(cpu_id cpuid)
-python_extension_module(cpu_id)
-
 add_subdirectory(../sleef ${CMAKE_BINARY_DIR}/sleef)
 set_property(TARGET sleef PROPERTY FOLDER "dependencies")
 link_directories(${CMAKE_BINARY_DIR}/sleef/lib)
@@ -27,13 +22,13 @@ set_source_files_properties(simd_array/array_avx512.cpp PROPERTIES COMPILE_FLAGS
 
 add_cython_target(sleef_ops CXX)
 add_library(sleef_ops MODULE ${sleef_ops}
-  simd_array/array.cpp
   simd_array/array_scalar.cpp
   simd_array/array_avx.cpp
   simd_array/array_avx512.cpp
-  simd_array/array_sse.cpp)
+  simd_array/array_sse.cpp
+  simd_array/dispatch.cpp)
 target_link_libraries(sleef_ops sleef)
+target_link_libraries(sleef_ops cpuid)
 python_extension_module(sleef_ops)
 
-install(TARGETS cpu_id LIBRARY DESTINATION thinc_sleef_ops)
 install(TARGETS sleef_ops LIBRARY DESTINATION thinc_sleef_ops)
