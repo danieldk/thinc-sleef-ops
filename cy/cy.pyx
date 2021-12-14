@@ -9,7 +9,6 @@ cdef class SleefArray:
     def instruction_sets():
         return instruction_sets()
 
-
     cdef void erf(self, reals_ft a, dim_t n):
         if reals_ft is floats_t:
             deref(self.array).erff(a, n)
