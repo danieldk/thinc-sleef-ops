@@ -18,4 +18,4 @@ endif()
 
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 
-add_subdirectory(cy)
+add_subdirectory(thinc_sleef_ops)
