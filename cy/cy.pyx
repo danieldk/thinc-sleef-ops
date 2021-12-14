@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 from cython.operator cimport dereference as deref
 
-cdef class SleefOps:
+cdef class SleefArray:
     def __init__(self):
         self.array.swap(create_array())
 
@@ -30,6 +30,6 @@ cdef class SleefOps:
 
 @contextmanager
 def with_cpu_feature(InstructionSet feature):
-    ops = SleefOps()
-    ops.array.swap(create_array_for_instruction_set(feature))
-    yield ops
+    array = SleefArray()
+    array.array.swap(create_array_for_instruction_set(feature))
+    yield array

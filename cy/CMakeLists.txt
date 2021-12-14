@@ -20,7 +20,7 @@ get_directory_property(COMPILER_SUPPORTS_AVX512F DIRECTORY ../sleef DEFINITION C
 get_directory_property(COMPILER_SUPPORTS_NEON DIRECTORY ../sleef DEFINITION COMPILER_SUPPORTS_ADVSIMD)
 get_directory_property(COMPILER_SUPPORTS_SSE2 DIRECTORY ../sleef DEFINITION COMPILER_SUPPORTS_SSE2)
 
-add_cython_target(sleef_ops CXX)
+add_cython_target(cy CXX)
 
 set(SIMD_ARRAY_SOURCES
   simd_array/array_scalar.cpp
@@ -50,9 +50,9 @@ if(COMPILER_SUPPORTS_SSE2)
 endif()
 
 
-add_library(sleef_ops MODULE ${sleef_ops} ${SIMD_ARRAY_SOURCES})
-target_link_libraries(sleef_ops sleef)
-target_link_libraries(sleef_ops cpuid)
-python_extension_module(sleef_ops)
+add_library(cy MODULE ${cy} ${SIMD_ARRAY_SOURCES})
+target_link_libraries(cy sleef)
+target_link_libraries(cy cpuid)
+python_extension_module(cy)
 
-install(TARGETS sleef_ops LIBRARY DESTINATION thinc_sleef_ops)
+install(TARGETS cy LIBRARY DESTINATION thinc_sleef_ops)
