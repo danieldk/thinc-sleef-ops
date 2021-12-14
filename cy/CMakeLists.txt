@@ -43,16 +43,20 @@ if(COMPILER_SUPPORTS_AVX512F)
   add_compile_definitions(COMPILER_SUPPORTS_AVX512F)
 endif()
 
-
 if(COMPILER_SUPPORTS_SSE2)
   list(APPEND SIMD_ARRAY_SOURCES simd_array/array_sse.cpp)
   add_compile_definitions(COMPILER_SUPPORTS_SSE2)
 endif()
-
 
 add_library(cy MODULE ${cy} ${SIMD_ARRAY_SOURCES})
 target_link_libraries(cy sleef)
 target_link_libraries(cy cpuid)
 python_extension_module(cy)
 
+add_cython_target(sleef_ops CXX)
+add_library(sleef_ops MODULE ${sleef_ops})
+add_dependencies(sleef_ops cy)
+python_extension_module(sleef_ops)
+
 install(TARGETS cy LIBRARY DESTINATION thinc_sleef_ops)
+install(TARGETS sleef_ops LIBRARY DESTINATION thinc_sleef_ops)
