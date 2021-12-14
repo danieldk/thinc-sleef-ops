@@ -56,6 +56,7 @@ python_extension_module(sleef_array)
 add_cython_target(sleef_ops CXX)
 add_library(sleef_ops MODULE ${sleef_ops})
 add_dependencies(sleef_ops sleef_array)
+target_include_directories(sleef_ops PRIVATE ${NumPy_INCLUDE_DIRS})
 python_extension_module(sleef_ops)
 
 install(TARGETS sleef_array LIBRARY DESTINATION thinc_sleef_ops)
