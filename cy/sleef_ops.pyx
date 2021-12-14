@@ -7,8 +7,8 @@ cimport numpy as np
 import numpy as np
 from thinc.api import Ops
 
-from .cy cimport InstructionSet, SleefArray
-from .cy import with_cpu_feature as sleef_with_cpu_feature
+from .sleef_array cimport InstructionSet, SleefArray
+from .sleef_array import with_cpu_feature as sleef_with_cpu_feature
 
 class SleefOps(Ops):
     def __init__(self):
