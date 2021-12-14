@@ -10,23 +10,41 @@ cdef class SleefArray:
         return instruction_sets()
 
 
-    def erf(self, a: float[:], in_place: bool=False):
-        if not in_place:
-            a = a.copy()
-        deref(self.array).erff(&a[0], len(a))
-        return a
+    cdef void erf(self, reals_ft a, dim_t n):
+        if reals_ft is floats_t:
+            deref(self.array).erff(a, n)
+        elif reals_ft is float1d_t:
+            deref(self.array).erff(&a[0], n)
+        elif reals_ft is doubles_t:
+            deref(self.array).erf(a, n)
+        elif reals_ft is double1d_t:
+            deref(self.array).erf(&a[0], n)
+        else:
+            pass
 
-    def exp(self, a: float[:], in_place: bool=False):
-        if not in_place:
-            a = a.copy()
-        deref(self.array).expf(&a[0], len(a))
-        return a
+    cdef void exp(self, reals_ft a, dim_t n):
+        if reals_ft is floats_t:
+            deref(self.array).expf(a, n)
+        elif reals_ft is float1d_t:
+            deref(self.array).expf(&a[0], n)
+        elif reals_ft is doubles_t:
+            deref(self.array).exp(a, n)
+        elif reals_ft is double1d_t:
+            deref(self.array).exp(&a[0], n)
+        else:
+            pass
 
-    def tanh(self, a: float[:], in_place: bool=False):
-        if not in_place:
-            a = a.copy()
-        deref(self.array).tanhf(&a[0], len(a))
-        return a
+    cdef void tanh(self, reals_ft a, dim_t n):
+        if reals_ft is floats_t:
+            deref(self.array).tanhf(a, n)
+        elif reals_ft is float1d_t:
+            deref(self.array).tanhf(&a[0], n)
+        elif reals_ft is doubles_t:
+            deref(self.array).tanh(a, n)
+        elif reals_ft is double1d_t:
+            deref(self.array).tanh(&a[0], n)
+        else:
+            pass
 
 @contextmanager
 def with_cpu_feature(InstructionSet feature):

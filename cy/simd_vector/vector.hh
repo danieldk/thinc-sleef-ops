@@ -16,21 +16,39 @@ struct Scalar {};
 template <class T>
 struct Vector {
   typedef Scalar LOWER_TYPE;
+  static size_t const N_DOUBLE = 1;
   static size_t const N_FLOAT = 1;
 };
 
 template<>
 struct Vector<Scalar> {
-  typedef float TYPE;
-  typedef Scalar LOWER_TYPE;
+  typedef double DOUBLE_TYPE;
+  static size_t const N_DOUBLE = 1;
+
+  typedef float FLOAT_TYPE;
   static size_t const N_FLOAT = 1;
+
+  typedef Scalar LOWER_TYPE;
+
+
+  static void erf(double *a) noexcept {
+    *a = std::erf(*a);
+  }
 
   static void erff(float *a) noexcept {
     *a = std::erf(*a);
   }
 
+  static void exp(double *a) noexcept {
+    *a = std::exp(*a);
+  }
+
   static void expf(float *a) noexcept {
     *a = std::exp(*a);
+  }
+
+  static void tanh(double *a) noexcept {
+    *a = Sleef_tanh_u10(*a);
   }
 
   static void tanhf(float *a) noexcept {
