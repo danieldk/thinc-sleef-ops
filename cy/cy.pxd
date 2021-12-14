@@ -22,5 +22,5 @@ cdef extern from "simd_array/dispatch.hh":
      unique_ptr[ArrayBase] create_array() except +
      unique_ptr[ArrayBase] create_array_for_instruction_set(InstructionSet instruction_set) except +
 
-cdef class SleefOps:
+cdef class SleefArray:
   cdef unique_ptr[ArrayBase] array
