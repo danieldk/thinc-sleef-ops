@@ -3,14 +3,16 @@ import pytest
 
 from thinc_sleef_ops import SleefOps, with_cpu_feature
 
+
 @pytest.fixture
 def ops():
     return SleefOps()
 
 
 @pytest.mark.parametrize("cpu_feature", SleefOps.instruction_sets())
-def test_exp(ops, cpu_feature):
-    a = np.arange(-3, 3.5, 0.5, dtype=np.float32)
+@pytest.mark.parametrize("dtype", [np.float32, np.float64])
+def test_exp(ops, cpu_feature, dtype):
+    a = np.arange(-3, 3.5, 0.5, dtype=dtype)
 
     with with_cpu_feature(cpu_feature) as feature_ops:
         assert np.allclose(feature_ops.exp(a), np.exp(a))
@@ -19,7 +21,8 @@ def test_exp(ops, cpu_feature):
 
 
 @pytest.mark.parametrize("cpu_feature", SleefOps.instruction_sets())
-def test_erff(ops, cpu_feature):
+@pytest.mark.parametrize("dtype", [np.float32, np.float64])
+def test_erff(ops, cpu_feature, dtype):
     ERF_CHECK = np.array(
         [
             -1.0000,
@@ -35,10 +38,11 @@ def test_erff(ops, cpu_feature):
             0.9953,
             0.9996,
             1.0000,
-        ]
+        ],
+        dtype=dtype,
     )
 
-    a = np.arange(-3, 3.5, 0.5, dtype=np.float32)
+    a = np.arange(-3, 3.5, 0.5, dtype=dtype)
 
     with with_cpu_feature(cpu_feature) as feature_ops:
         assert np.allclose(feature_ops.erf(a), ERF_CHECK, atol=1e-4)
@@ -51,8 +55,9 @@ def test_erff(ops, cpu_feature):
 
 
 @pytest.mark.parametrize("cpu_feature", SleefOps.instruction_sets())
-def test_tanh(ops, cpu_feature):
-    a = np.arange(-10, 10, 0.5, dtype=np.float32)
+@pytest.mark.parametrize("dtype", [np.float32, np.float64])
+def test_tanh(ops, cpu_feature, dtype):
+    a = np.arange(-10, 10, 0.5, dtype=dtype)
 
     with with_cpu_feature(cpu_feature) as feature_ops:
         assert np.allclose(feature_ops.tanh(a), np.tanh(a), atol=1e-4)
