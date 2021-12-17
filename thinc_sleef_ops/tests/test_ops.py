@@ -1,7 +1,8 @@
+from typing import Callable, Union
 import numpy as np
 import pytest
 
-from thinc_sleef_ops import SleefOps, with_cpu_feature
+from thinc_sleef_ops import InstructionSet, SleefOps, with_cpu_feature
 
 
 @pytest.fixture
@@ -9,15 +10,23 @@ def ops():
     return SleefOps()
 
 
+def check_elementwise_function(
+    op_name: str,
+    f_check: Callable[[np.ndarray], np.ndarray],
+    cpu_feature: InstructionSet,
+    dtype: Union[np.float32, np.float64],
+    inputs: np.ndarray,
+):
+    with with_cpu_feature(cpu_feature) as feature_ops:
+        f = getattr(feature_ops, op_name)
+        assert np.allclose(f(inputs), f_check(inputs), atol=1e-4)
+
+
 @pytest.mark.parametrize("cpu_feature", SleefOps.instruction_sets())
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
 def test_exp(ops, cpu_feature, dtype):
-    a = np.arange(-3, 3.5, 0.5, dtype=dtype)
-
-    with with_cpu_feature(cpu_feature) as feature_ops:
-        assert np.allclose(feature_ops.exp(a), np.exp(a))
-
-    assert np.allclose(ops.exp(a), np.exp(a))
+    inputs = np.arange(-10, 10, 0.5, dtype=dtype)
+    check_elementwise_function("exp", np.exp, cpu_feature, dtype, inputs)
 
 
 @pytest.mark.parametrize("cpu_feature", SleefOps.instruction_sets())
@@ -42,24 +51,12 @@ def test_erff(ops, cpu_feature, dtype):
         dtype=dtype,
     )
 
-    a = np.arange(-3, 3.5, 0.5, dtype=dtype)
-
-    with with_cpu_feature(cpu_feature) as feature_ops:
-        assert np.allclose(feature_ops.erf(a), ERF_CHECK, atol=1e-4)
-
-    assert np.allclose(
-        ops.erf(a),
-        ERF_CHECK,
-        atol=1e-4,
-    )
+    inputs = np.arange(-3, 3.5, 0.5, dtype=dtype)
+    check_elementwise_function("erf", lambda _: ERF_CHECK, cpu_feature, dtype, inputs)
 
 
 @pytest.mark.parametrize("cpu_feature", SleefOps.instruction_sets())
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
 def test_tanh(ops, cpu_feature, dtype):
-    a = np.arange(-10, 10, 0.5, dtype=dtype)
-
-    with with_cpu_feature(cpu_feature) as feature_ops:
-        assert np.allclose(feature_ops.tanh(a), np.tanh(a), atol=1e-4)
-
-    assert np.allclose(ops.tanh(a), np.tanh(a))
+    inputs = np.arange(-10, 10, 0.5, dtype=dtype)
+    check_elementwise_function("tanh", np.tanh, cpu_feature, dtype, inputs)
