@@ -15,23 +15,30 @@ def check_elementwise_function(
     f_check: Callable[[np.ndarray], np.ndarray],
     cpu_feature: InstructionSet,
     dtype: Union[np.float32, np.float64],
+    inplace: bool,
     inputs: np.ndarray,
 ):
     with with_cpu_feature(cpu_feature) as feature_ops:
         f = getattr(feature_ops, op_name)
-        assert np.allclose(f(inputs), f_check(inputs), atol=1e-4)
+        inputs_copy = inputs.copy()
+
+        assert np.allclose(f(inputs_copy, inplace=inplace), f_check(inputs), atol=1e-4)
+        if inplace:
+            assert np.allclose(inputs_copy, f_check(inputs), atol=1e-4)
 
 
 @pytest.mark.parametrize("cpu_feature", SleefOps.instruction_sets())
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
-def test_exp(ops, cpu_feature, dtype):
+@pytest.mark.parametrize("inplace", [True, False])
+def test_exp(ops, cpu_feature, dtype, inplace):
     inputs = np.arange(-10, 10, 0.5, dtype=dtype)
-    check_elementwise_function("exp", np.exp, cpu_feature, dtype, inputs)
+    check_elementwise_function("exp", np.exp, cpu_feature, dtype, inplace, inputs)
 
 
 @pytest.mark.parametrize("cpu_feature", SleefOps.instruction_sets())
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
-def test_erff(ops, cpu_feature, dtype):
+@pytest.mark.parametrize("inplace", [True, False])
+def test_erff(ops, cpu_feature, dtype, inplace):
     ERF_CHECK = np.array(
         [
             -1.0000,
@@ -52,11 +59,14 @@ def test_erff(ops, cpu_feature, dtype):
     )
 
     inputs = np.arange(-3, 3.5, 0.5, dtype=dtype)
-    check_elementwise_function("erf", lambda _: ERF_CHECK, cpu_feature, dtype, inputs)
+    check_elementwise_function(
+        "erf", lambda _: ERF_CHECK, cpu_feature, dtype, inplace, inputs
+    )
 
 
 @pytest.mark.parametrize("cpu_feature", SleefOps.instruction_sets())
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
-def test_tanh(ops, cpu_feature, dtype):
+@pytest.mark.parametrize("inplace", [True, False])
+def test_tanh(ops, cpu_feature, dtype, inplace):
     inputs = np.arange(-10, 10, 0.5, dtype=dtype)
-    check_elementwise_function("tanh", np.tanh, cpu_feature, dtype, inputs)
+    check_elementwise_function("tanh", np.tanh, cpu_feature, dtype, inplace, inputs)

@@ -18,10 +18,10 @@ class SleefOps(Ops):
     def instruction_sets():
         return SleefArray.instruction_sets()
 
-    def erf(self, a: np.ndarray):
+    def erf(self, a: np.ndarray, *, inplace: bool=False):
         cdef SleefArray array = self._array
 
-        a = self._to_contig_or_copy(a)
+        a = self._to_contig_or_copy(a, inplace=inplace)
         if a.dtype == np.float32:
             array.erf(<float *> a.data, len(a))
         elif a.dtype == np.float64:
@@ -31,10 +31,10 @@ class SleefOps(Ops):
 
         return a
 
-    def exp(self, np.ndarray a):
+    def exp(self, np.ndarray a, *, inplace: bool=False):
         cdef SleefArray array = self._array
 
-        a = self._to_contig_or_copy(a)
+        a = self._to_contig_or_copy(a, inplace=inplace)
         if a.dtype == np.float32:
             array.exp(<float *> a.data, len(a))
         elif a.dtype == np.float64:
@@ -44,10 +44,10 @@ class SleefOps(Ops):
 
         return a
 
-    def tanh(self, np.ndarray a):
+    def tanh(self, np.ndarray a, *, inplace: bool=False):
         cdef SleefArray array = self._array
 
-        a = self._to_contig_or_copy(a)
+        a = self._to_contig_or_copy(a, inplace=inplace)
         if a.dtype == np.float32:
             array.tanh(<float *> a.data, len(a))
         elif a.dtype == np.float64:
@@ -57,15 +57,20 @@ class SleefOps(Ops):
 
         return a
 
-    def _to_contig_or_copy(self, np.ndarray a):
-        cdef np.ndarray a_contig = self.as_contig(a)
+    def _to_contig_or_copy(self, np.ndarray a, *, inplace: bool=False):
+        is_contiguous = a.flags["C_CONTIGUOUS"] or a.flags["F_CONTIGUOUS"]
 
-        if a_contig is a:
-            a = a.copy()
-        else:
-            a = a_contig
+        if inplace:
+           if is_contiguous:
+               return a
+           else:
+               raise "Cannot apply operation in-place, array is not contiguous"
 
-        return a
+        if is_contiguous:
+            return a.copy()
+
+        return self.as_contig(a)
+
 
 @contextmanager
 def with_cpu_feature(InstructionSet feature):
