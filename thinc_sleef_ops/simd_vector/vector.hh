@@ -34,8 +34,16 @@ struct Vector<Scalar> {
     *a += v;
   }
 
+  static void add(double *a, double *v) noexcept {
+    *a += *v;
+  }
+
   static void addf(float *a, float v) noexcept {
     *a += v;
+  }
+
+  static void addf(float *a, float *v) noexcept {
+    *a += *v;
   }
 
   static void erf(double *a) noexcept {
@@ -52,6 +60,22 @@ struct Vector<Scalar> {
 
   static void expf(float *a) noexcept {
     *a = std::exp(*a);
+  }
+
+  static void mulf(float *a, float v) noexcept {
+    *a *= v;
+  }
+
+  static void mulf(float *a, float *v) noexcept {
+    *a *= *v;
+  }
+
+  static void mul(double *a, double v) noexcept {
+    *a *= v;
+  }
+
+  static void mul(double *a, double *v) noexcept {
+    *a *= *v;
   }
 
   static void neg(double *a) noexcept {
