@@ -33,6 +33,18 @@ cdef class SleefArray:
         else:
             pass
 
+    cdef void logisticf(self, reals_ft a, dim_t n):
+        if reals_ft is floats_t:
+            deref(self.array).logisticff(a, n)
+        elif reals_ft is float1d_t:
+            deref(self.array).logisticff(&a[0], n)
+        elif reals_ft is doubles_t:
+            deref(self.array).logisticf(a, n)
+        elif reals_ft is double1d_t:
+            deref(self.array).logisticf(&a[0], n)
+        else:
+            pass
+
     cdef void tanh(self, reals_ft a, dim_t n):
         if reals_ft is floats_t:
             deref(self.array).tanhf(a, n)

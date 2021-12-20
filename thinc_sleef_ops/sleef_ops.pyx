@@ -44,6 +44,19 @@ class SleefOps(Ops):
 
         return a
 
+    def sigmoid(self, np.ndarray a, *, inplace: bool=False):
+        cdef SleefArray array = self._array
+
+        a = self._to_contig_or_copy(a, inplace=inplace)
+        if a.dtype == np.float32:
+            array.logisticf(<float *> a.data, len(a))
+        elif a.dtype == np.float64:
+            array.logisticf(<double *> a.data, len(a))
+        else:
+            raise TypeError("Unhandled array dtype")
+
+        return a
+
     def tanh(self, np.ndarray a, *, inplace: bool=False):
         cdef SleefArray array = self._array
 

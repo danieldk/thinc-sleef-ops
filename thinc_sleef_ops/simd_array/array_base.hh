@@ -8,6 +8,12 @@ struct ArrayBase {
   virtual void erff(float *a, size_t n) noexcept = 0;
   virtual void exp(double *a, size_t n) noexcept = 0;
   virtual void expf(float *a, size_t n) noexcept = 0;
+  virtual void logisticf(double *a, size_t n) noexcept = 0;
+  virtual void logisticff(float *a, size_t n) noexcept = 0;
+  virtual void neg(double *a, size_t n) noexcept = 0;
+  virtual void negf(float *a, size_t n) noexcept = 0;
+  virtual void recip(double *a, size_t n) noexcept = 0;
+  virtual void recipf(float *a, size_t n) noexcept = 0;
   virtual void tanh(double *a, size_t n) noexcept = 0;
   virtual void tanhf(float *a, size_t n) noexcept = 0;
 };

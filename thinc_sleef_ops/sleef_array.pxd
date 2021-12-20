@@ -22,6 +22,8 @@ cdef extern from "simd_array/array_base.hh":
          void erff(float *a, size_t n)
          void exp(double *a, size_t n)
          void expf(float *a, size_t n)
+         void logisticf(double *a, size_t n)
+         void logisticff(float *a, size_t n)
          void tanh(double *a, size_t n)
          void tanhf(float *a, size_t n)
 
@@ -43,4 +45,5 @@ cdef class SleefArray:
 
   cdef void erf(self, reals_ft a, dim_t n)
   cdef void exp(self, reals_ft a, dim_t n)
+  cdef void logisticf(self, reals_ft a, dim_t n)
   cdef void tanh(self, reals_ft a, dim_t n)

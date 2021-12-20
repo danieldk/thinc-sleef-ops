@@ -30,6 +30,13 @@ struct Vector<Scalar> {
 
   typedef Scalar LOWER_TYPE;
 
+  static void add(double *a, double v) noexcept {
+    *a += v;
+  }
+
+  static void addf(float *a, float v) noexcept {
+    *a += v;
+  }
 
   static void erf(double *a) noexcept {
     *a = std::erf(*a);
@@ -45,6 +52,22 @@ struct Vector<Scalar> {
 
   static void expf(float *a) noexcept {
     *a = std::exp(*a);
+  }
+
+  static void neg(double *a) noexcept {
+    *a = -*a;
+  }
+
+  static void negf(float *a) noexcept {
+    *a = -*a;
+  }
+
+  static void recip(double *a) noexcept {
+    *a = 1.0 / *a;
+  }
+
+  static void recipf(float *a) noexcept {
+    *a = 1.0 / *a;
   }
 
   static void tanh(double *a) noexcept {

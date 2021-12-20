@@ -63,6 +63,12 @@ def test_erff(ops, cpu_feature, dtype, inplace):
         "erf", lambda _: ERF_CHECK, cpu_feature, dtype, inplace, inputs
     )
 
+@pytest.mark.parametrize("cpu_feature", SleefOps.instruction_sets())
+@pytest.mark.parametrize("dtype", [np.float32, np.float64])
+@pytest.mark.parametrize("inplace", [True, False])
+def test_sigmoid(ops, cpu_feature, dtype, inplace):
+    inputs = np.arange(-10, 10, 0.5, dtype=dtype)
+    check_elementwise_function("sigmoid", lambda x: 1.0 / (1.0 + np.exp(-x)), cpu_feature, dtype, inplace, inputs)
 
 @pytest.mark.parametrize("cpu_feature", SleefOps.instruction_sets())
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
