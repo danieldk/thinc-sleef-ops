@@ -26,6 +26,14 @@ struct Array: ArrayBase {
 
   void expf(float *a, size_t n) noexcept;
 
+  void gelu(double *a, size_t n) noexcept;
+
+  void gelu_backward(double* a, size_t n) noexcept;
+
+  void geluf(float *a, size_t n) noexcept;
+
+  void geluf_backward(float* a, size_t n) noexcept;
+
   void logisticf(double *a, size_t n) noexcept;
 
   void logisticff(float *a, size_t n) noexcept;

@@ -25,11 +25,19 @@ struct Vector<NEON> {
     }, a);
   }
 
+  static void add(double *a, double *v) noexcept {
+    with_load_load_store(vaddq_f64, a, v);
+  }
+
   static void addf(float *a, float v) noexcept {
     with_load_store([=](FLOAT_TYPE a){
       FLOAT_TYPE v_simd = vdupq_n_f32(v);
       return vaddq_f32(a, v_simd);
     }, a);
+  }
+
+  static void addf(float *a, float *v) noexcept {
+    with_load_load_store(vaddq_f32, a, v);
   }
 
   static void erf(double *a) noexcept {
@@ -46,6 +54,28 @@ struct Vector<NEON> {
 
   static void expf(float *a) noexcept {
     with_load_store(Sleef_expf4_u10, a);
+  }
+
+  static void mul(double *a, double v) noexcept {
+    with_load_store([=](DOUBLE_TYPE a){
+      DOUBLE_TYPE v_simd = vdupq_n_f64(v);
+      return vmulq_f64(a, v_simd);
+    }, a);
+  }
+
+  static void mul(double *a, double *v) noexcept {
+    with_load_load_store(vmulq_f64, a, v);
+  }
+
+  static void mulf(float *a, float v) noexcept {
+    with_load_store([v](FLOAT_TYPE a){
+      FLOAT_TYPE v_simd = vdupq_n_f32(v);
+      return vmulq_f32(a, v_simd);
+    }, a);
+  }
+
+  static void mulf(float *a, float *v) noexcept {
+    with_load_load_store(vmulq_f32, a, v);
   }
 
   static void neg(double *a) noexcept {
@@ -91,6 +121,22 @@ private:
     DOUBLE_TYPE val = vld1q_f64(a);
     val = f(val);
     vst1q_f64(a, val);
+  }
+
+  template <class F>
+  static void with_load_load_store(F f, double *a, double *b) noexcept {
+    DOUBLE_TYPE val_a = vld1q_f64(a);
+    DOUBLE_TYPE val_b = vld1q_f64(b);
+    val_a = f(val_a, val_b);
+    vst1q_f64(a, val_a);
+  }
+
+  template <class F>
+  static void with_load_load_store(F f, float *a, float *b) noexcept {
+    FLOAT_TYPE val_a = vld1q_f32(a);
+    FLOAT_TYPE val_b = vld1q_f32(b);
+    val_a = f(val_a, val_b);
+    vst1q_f32(a, val_a);
   }
 };
 
