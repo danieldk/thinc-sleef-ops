@@ -55,32 +55,56 @@ struct Array : ArrayBase {
 
   void cdf(double *a, size_t n) noexcept {
     // Φ(x) = 1/2[1 + erf(x/sqrt(2))]
-    Array<T>::mul(a, n, M_SQRT1_2);
-    Array<T>::erf(a, n);
-    Array<T>::add(a, n, 1.0);
-    Array<T>::mul(a, n, 0.5);
+    apply_elementwise(
+      [](double *a) {
+        Vector<T>::mul(a, M_SQRT1_2);
+        Vector<T>::erf(a);
+        Vector<T>::add(a, 1.0);
+        Vector<T>::mul(a, 0.5);
+      },
+      [](double *a, size_t n) { return Array<LOWER_TYPE>().cdf(a, n); },
+      a, n
+    );
   }
 
   void cdff(float *a, size_t n) noexcept {
     // Φ(x) = 1/2[1 + erf(x/sqrt(2))]
-    Array<T>::mulf(a, n, M_SQRT1_2);
-    Array<T>::erff(a, n);
-    Array<T>::addf(a, n, 1.0);
-    Array<T>::mulf(a, n, 0.5);
+    apply_elementwise(
+      [](float *a) {
+        Vector<T>::mulf(a, M_SQRT1_2);
+        Vector<T>::erff(a);
+        Vector<T>::addf(a, 1.0);
+        Vector<T>::mulf(a, 0.5);
+      },
+      [](float *a, size_t n) { return Array<LOWER_TYPE>().cdff(a, n); },
+      a, n
+    );
   }
 
   void pdf(double *a, size_t n) noexcept {
-    Array<T>::mul(a, a, n);
-    Array<T>::mul(a, n, -0.5);
-    Array<T>::exp(a, n);
-    Array<T>::mul(a, n, M_1_SQRT_2PI);
+    apply_elementwise(
+      [](double *a) {
+        Vector<T>::mul(a, a);
+        Vector<T>::mul(a, -0.5);
+        Vector<T>::exp(a);
+        Vector<T>::mul(a, M_1_SQRT_2PI);
+      },
+      [](double *a, size_t n) { return Array<LOWER_TYPE>().pdf(a, n); },
+      a, n
+    );
   }
 
   void pdff(float *a, size_t n) noexcept {
-    Array<T>::mulf(a, a, n);
-    Array<T>::mulf(a, n, -0.5);
-    Array<T>::expf(a, n);
-    Array<T>::mulf(a, n, M_1_SQRT_2PI);
+    apply_elementwise(
+      [](float *a) {
+        Vector<T>::mulf(a, a);
+        Vector<T>::mulf(a, -0.5);
+        Vector<T>::expf(a);
+        Vector<T>::mulf(a, M_1_SQRT_2PI);
+      },
+      [](float *a, size_t n) { return Array<LOWER_TYPE>().pdff(a, n); },
+      a, n
+    );
   }
 
   void erf(double *a, size_t n) noexcept {
