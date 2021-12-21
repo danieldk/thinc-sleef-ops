@@ -36,12 +36,12 @@ struct Vector<NEON> {
     return vaddq_f32(a, b);
   }
 
-  static DOUBLE_TYPE cdf(DOUBLE_TYPE a) {
-    return generic_cdf<NEON>(a);
+  static DOUBLE_TYPE div(DOUBLE_TYPE a, DOUBLE_TYPE b) noexcept {
+    return vdivq_f64(a, b);
   }
 
-  static FLOAT_TYPE cdff(FLOAT_TYPE a) {
-    return generic_cdff<NEON>(a);
+  static FLOAT_TYPE divf(FLOAT_TYPE a, FLOAT_TYPE b) noexcept {
+    return vdivq_f32(a, b);
   }
 
   static DOUBLE_TYPE erf(DOUBLE_TYPE a) noexcept {
@@ -58,6 +58,22 @@ struct Vector<NEON> {
 
   static FLOAT_TYPE expf(FLOAT_TYPE a) noexcept {
     return Sleef_expf4_u10(a);
+  }
+
+  static DOUBLE_TYPE logistic_cdf(DOUBLE_TYPE a) {
+    return generic_logistic_cdf<NEON>(a);
+  }
+
+  static FLOAT_TYPE logistic_cdff(FLOAT_TYPE a) {
+    return generic_logistic_cdff<NEON>(a);
+  }
+
+  static DOUBLE_TYPE logistic_pdf(DOUBLE_TYPE a) {
+    return generic_logistic_pdf<NEON>(a);
+  }
+
+  static FLOAT_TYPE logistic_pdff(FLOAT_TYPE a) {
+    return generic_logistic_pdff<NEON>(a);
   }
 
   static DOUBLE_TYPE mul(DOUBLE_TYPE a, DOUBLE_TYPE b) noexcept {
@@ -86,12 +102,20 @@ struct Vector<NEON> {
     return vnegq_f32(a);
   }
 
-  static DOUBLE_TYPE pdf(DOUBLE_TYPE a) {
-    return generic_pdf<NEON>(a);
+  static DOUBLE_TYPE normal_cdf(DOUBLE_TYPE a) {
+    return generic_normal_cdf<NEON>(a);
   }
 
-  static FLOAT_TYPE pdff(FLOAT_TYPE a) {
-    return generic_pdff<NEON>(a);
+  static FLOAT_TYPE normal_cdff(FLOAT_TYPE a) {
+    return generic_normal_cdff<NEON>(a);
+  }
+
+  static DOUBLE_TYPE normal_pdf(DOUBLE_TYPE a) {
+    return generic_normal_pdf<NEON>(a);
+  }
+
+  static FLOAT_TYPE normal_pdff(FLOAT_TYPE a) {
+    return generic_normal_pdff<NEON>(a);
   }
 
   static DOUBLE_TYPE recip(DOUBLE_TYPE a) noexcept {

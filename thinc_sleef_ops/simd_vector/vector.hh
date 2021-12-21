@@ -25,7 +25,39 @@ struct Vector {
 #define M_1_SQRT_2PI 0.398942280401432677939946059934
 
 template <class T>
-static typename Vector<T>::DOUBLE_TYPE generic_cdf(typename Vector<T>::DOUBLE_TYPE a) {
+static typename Vector<T>::DOUBLE_TYPE generic_logistic_cdf(typename Vector<T>::DOUBLE_TYPE a) {
+  auto r = Vector<T>::neg(a);
+  r = Vector<T>::exp(r);
+  r = Vector<T>::add_scalar(r, 1.0);
+  return Vector<T>::recip(r);
+}
+
+template <class T>
+static typename Vector<T>::FLOAT_TYPE generic_logistic_cdff(typename Vector<T>::FLOAT_TYPE a) {
+  auto r = Vector<T>::negf(a);
+  r = Vector<T>::expf(r);
+  r = Vector<T>::addf_scalar(r, 1.0);
+  return Vector<T>::recipf(r);
+}
+
+template <class T>
+static typename Vector<T>::DOUBLE_TYPE generic_logistic_pdf(typename Vector<T>::DOUBLE_TYPE a) {
+  auto exp_a = Vector<T>::exp(a);
+  auto one_exp_a = Vector<T>::add_scalar(exp_a, 1.0);
+  auto denom = Vector<T>::mul(one_exp_a, one_exp_a);
+  return Vector<T>::div(exp_a, denom);
+}
+
+template <class T>
+static typename Vector<T>::FLOAT_TYPE generic_logistic_pdff(typename Vector<T>::FLOAT_TYPE a) {
+  auto exp_a = Vector<T>::expf(a);
+  auto one_exp_a = Vector<T>::addf_scalar(exp_a, 1.0);
+  auto denom = Vector<T>::mulf(one_exp_a, one_exp_a);
+  return Vector<T>::divf(exp_a, denom);
+}
+
+template <class T>
+static typename Vector<T>::DOUBLE_TYPE generic_normal_cdf(typename Vector<T>::DOUBLE_TYPE a) {
   auto r = Vector<T>::mul_scalar(a, M_SQRT1_2);
   r = Vector<T>::erf(r);
   r = Vector<T>::add_scalar(r, 1.0);
@@ -33,7 +65,7 @@ static typename Vector<T>::DOUBLE_TYPE generic_cdf(typename Vector<T>::DOUBLE_TY
 }
 
 template <class T>
-static typename Vector<T>::FLOAT_TYPE generic_cdff(typename Vector<T>::FLOAT_TYPE a) {
+static typename Vector<T>::FLOAT_TYPE generic_normal_cdff(typename Vector<T>::FLOAT_TYPE a) {
   auto r = Vector<T>::mulf_scalar(a, M_SQRT1_2);
   r = Vector<T>::erff(r);
   r = Vector<T>::addf_scalar(r, 1.0);
@@ -41,7 +73,7 @@ static typename Vector<T>::FLOAT_TYPE generic_cdff(typename Vector<T>::FLOAT_TYP
 }
 
 template <class T>
-static typename Vector<T>::DOUBLE_TYPE generic_pdf(typename Vector<T>::DOUBLE_TYPE a) {
+static typename Vector<T>::DOUBLE_TYPE generic_normal_pdf(typename Vector<T>::DOUBLE_TYPE a) {
   auto r = Vector<T>::mul(a, a);
   r = Vector<T>::mul_scalar(r, -0.5);
   r = Vector<T>::exp(r);
@@ -49,7 +81,7 @@ static typename Vector<T>::DOUBLE_TYPE generic_pdf(typename Vector<T>::DOUBLE_TY
 }
 
 template <class T>
-static typename Vector<T>::FLOAT_TYPE generic_pdff(typename Vector<T>::FLOAT_TYPE a) {
+static typename Vector<T>::FLOAT_TYPE generic_normal_pdff(typename Vector<T>::FLOAT_TYPE a) {
   auto r = Vector<T>::mulf(a, a);
   r = Vector<T>::mulf_scalar(r, -0.5);
   r = Vector<T>::expf(r);
@@ -82,12 +114,12 @@ struct Vector<Scalar> {
     return a + b;
   }
 
-  static DOUBLE_TYPE cdf(DOUBLE_TYPE a) {
-    return generic_cdf<Scalar>(a);
+  static DOUBLE_TYPE div(DOUBLE_TYPE a, DOUBLE_TYPE b) noexcept {
+    return a / b;
   }
 
-  static FLOAT_TYPE cdff(FLOAT_TYPE a) {
-    return generic_cdff<Scalar>(a);
+  static FLOAT_TYPE divf(FLOAT_TYPE a, FLOAT_TYPE b) noexcept {
+    return a / b;
   }
 
   static DOUBLE_TYPE erf(DOUBLE_TYPE a) noexcept {
@@ -104,6 +136,22 @@ struct Vector<Scalar> {
 
   static FLOAT_TYPE expf(FLOAT_TYPE a) noexcept {
     return std::exp(a);
+  }
+
+  static DOUBLE_TYPE logistic_cdf(DOUBLE_TYPE a) {
+    return generic_logistic_cdf<Scalar>(a);
+  }
+
+  static FLOAT_TYPE logistic_cdff(FLOAT_TYPE a) {
+    return generic_logistic_cdff<Scalar>(a);
+  }
+
+  static DOUBLE_TYPE logistic_pdf(DOUBLE_TYPE a) {
+    return generic_logistic_pdf<Scalar>(a);
+  }
+
+  static FLOAT_TYPE logistic_pdff(FLOAT_TYPE a) {
+    return generic_logistic_pdff<Scalar>(a);
   }
 
   static DOUBLE_TYPE mul(DOUBLE_TYPE a, DOUBLE_TYPE b) noexcept {
@@ -130,12 +178,20 @@ struct Vector<Scalar> {
     return -a;
   }
 
-  static DOUBLE_TYPE pdf(DOUBLE_TYPE a) {
-    return generic_pdf<Scalar>(a);
+  static DOUBLE_TYPE normal_cdf(DOUBLE_TYPE a) {
+    return generic_normal_cdf<Scalar>(a);
   }
 
-  static FLOAT_TYPE pdff(FLOAT_TYPE a) {
-    return generic_pdff<Scalar>(a);
+  static FLOAT_TYPE normal_cdff(FLOAT_TYPE a) {
+    return generic_normal_cdff<Scalar>(a);
+  }
+
+  static DOUBLE_TYPE normal_pdf(DOUBLE_TYPE a) {
+    return generic_normal_pdf<Scalar>(a);
+  }
+
+  static FLOAT_TYPE normal_pdff(FLOAT_TYPE a) {
+    return generic_normal_pdff<Scalar>(a);
   }
 
   static DOUBLE_TYPE recip(DOUBLE_TYPE a) noexcept {

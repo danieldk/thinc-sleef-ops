@@ -30,9 +30,17 @@ struct Array: ArrayBase {
 
   void geluf_backward(float* a, size_t n) noexcept;
 
-  void logisticf(double *a, size_t n) noexcept;
+  void logistic_cdf(double *a, size_t n) noexcept;
 
-  void logisticff(float *a, size_t n) noexcept;
+  void logistic_cdff(float *a, size_t n) noexcept;
+
+  void swish(double *a, size_t n) noexcept;
+
+  void swish_backward(double* a, size_t n) noexcept;
+
+  void swishf(float *a, size_t n) noexcept;
+
+  void swishf_backward(float* a, size_t n) noexcept;
 
   void tanh(double *a, size_t n) noexcept;
 

@@ -36,12 +36,12 @@ struct Vector<AVX> {
     return _mm256_add_ps(a, b_simd);
   }
 
-  static DOUBLE_TYPE cdf(DOUBLE_TYPE a) {
-    return generic_cdf<AVX>(a);
+  static DOUBLE_TYPE div(DOUBLE_TYPE a, DOUBLE_TYPE b) noexcept {
+    return _mm256_div_pd(a, b);
   }
 
-  static FLOAT_TYPE cdff(FLOAT_TYPE a) {
-    return generic_cdff<AVX>(a);
+  static FLOAT_TYPE divf(FLOAT_TYPE a, FLOAT_TYPE b) noexcept {
+    return _mm256_div_ps(a, b);
   }
 
   static DOUBLE_TYPE erf(DOUBLE_TYPE a) {
@@ -58,6 +58,22 @@ struct Vector<AVX> {
 
   static FLOAT_TYPE expf(FLOAT_TYPE a) {
     return Sleef_expf8_u10(a);
+  }
+
+  static DOUBLE_TYPE logistic_cdf(DOUBLE_TYPE a) {
+    return generic_logistic_cdf<AVX>(a);
+  }
+
+  static FLOAT_TYPE logistic_cdff(FLOAT_TYPE a) {
+    return generic_logistic_cdff<AVX>(a);
+  }
+
+  static DOUBLE_TYPE logistic_pdf(DOUBLE_TYPE a) {
+    return generic_logistic_pdf<AVX>(a);
+  }
+
+  static FLOAT_TYPE logistic_pdff(FLOAT_TYPE a) {
+    return generic_logistic_pdff<AVX>(a);
   }
 
   static DOUBLE_TYPE mul(DOUBLE_TYPE a, DOUBLE_TYPE b) noexcept {
@@ -88,12 +104,20 @@ struct Vector<AVX> {
     return _mm256_xor_ps(a, minus_zero);
   }
 
-  static DOUBLE_TYPE pdf(DOUBLE_TYPE a) {
-    return generic_pdf<AVX>(a);
+  static DOUBLE_TYPE normal_cdf(DOUBLE_TYPE a) {
+    return generic_normal_cdf<AVX>(a);
   }
 
-  static FLOAT_TYPE pdff(FLOAT_TYPE a) {
-    return generic_pdff<AVX>(a);
+  static FLOAT_TYPE normal_cdff(FLOAT_TYPE a) {
+    return generic_normal_cdff<AVX>(a);
+  }
+
+  static DOUBLE_TYPE normal_pdf(DOUBLE_TYPE a) {
+    return generic_normal_pdf<AVX>(a);
+  }
+
+  static FLOAT_TYPE normal_pdff(FLOAT_TYPE a) {
+    return generic_normal_pdff<AVX>(a);
   }
 
   static DOUBLE_TYPE recip(DOUBLE_TYPE a) noexcept {

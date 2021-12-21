@@ -57,15 +57,39 @@ cdef class SleefArray:
         else:
             pass
 
-    cdef void logisticf(self, reals_ft a, dim_t n):
+    cdef void logistic_cdf(self, reals_ft a, dim_t n):
         if reals_ft is floats_t:
-            deref(self.array).logisticff(a, n)
+            deref(self.array).logistic_cdff(a, n)
         elif reals_ft is float1d_t:
-            deref(self.array).logisticff(&a[0], n)
+            deref(self.array).logistic_cdff(&a[0], n)
         elif reals_ft is doubles_t:
-            deref(self.array).logisticf(a, n)
+            deref(self.array).logistic_cdf(a, n)
         elif reals_ft is double1d_t:
-            deref(self.array).logisticf(&a[0], n)
+            deref(self.array).logistic_cdf(&a[0], n)
+        else:
+            pass
+
+    cdef void swish(self, reals_ft a, dim_t n):
+        if reals_ft is floats_t:
+            deref(self.array).swishf(a, n)
+        elif reals_ft is float1d_t:
+            deref(self.array).swishf(&a[0], n)
+        elif reals_ft is doubles_t:
+            deref(self.array).swish(a, n)
+        elif reals_ft is double1d_t:
+            deref(self.array).swish(&a[0], n)
+        else:
+            pass
+
+    cdef void swish_backward(self, reals_ft a, dim_t n):
+        if reals_ft is floats_t:
+            deref(self.array).swishf_backward(a, n)
+        elif reals_ft is float1d_t:
+            deref(self.array).swishf_backward(&a[0], n)
+        elif reals_ft is doubles_t:
+            deref(self.array).swish_backward(a, n)
+        elif reals_ft is double1d_t:
+            deref(self.array).swish_backward(&a[0], n)
         else:
             pass
 

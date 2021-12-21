@@ -75,9 +75,35 @@ class SleefOps(Ops):
 
         a = self._to_contig_or_copy(a, inplace=inplace)
         if a.dtype == np.float32:
-            array.logisticf(<float *> a.data, len(a))
+            array.logistic_cdf(<float *> a.data, len(a))
         elif a.dtype == np.float64:
-            array.logisticf(<double *> a.data, len(a))
+            array.logistic_cdf(<double *> a.data, len(a))
+        else:
+            raise TypeError("Unhandled array dtype")
+
+        return a
+
+    def swish(self, np.ndarray a, *, inplace: bool=False):
+        cdef SleefArray array = self._array
+
+        a = self._to_contig_or_copy(a, inplace=inplace)
+        if a.dtype == np.float32:
+            array.swish(<float *> a.data, len(a))
+        elif a.dtype == np.float64:
+            array.swish(<double *> a.data, len(a))
+        else:
+            raise TypeError("Unhandled array dtype")
+
+        return a
+
+    def swish_backward(self, np.ndarray a, *, inplace: bool=False):
+        cdef SleefArray array = self._array
+
+        a = self._to_contig_or_copy(a, inplace=inplace)
+        if a.dtype == np.float32:
+            array.swish_backward(<float *> a.data, len(a))
+        elif a.dtype == np.float64:
+            array.swish_backward(<double *> a.data, len(a))
         else:
             raise TypeError("Unhandled array dtype")
 
