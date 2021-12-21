@@ -23,11 +23,15 @@ cdef extern from "simd_array/array_base.hh":
          void exp(double *a, size_t n)
          void expf(float *a, size_t n)
          void gelu(double *a, size_t n)
-         void gelu_backward(double* a, size_t n);
+         void gelu_backward(double* a, size_t n)
          void geluf(float *a, size_t n)
-         void geluf_backward(float* a, size_t n);
-         void logisticf(double *a, size_t n)
-         void logisticff(float *a, size_t n)
+         void geluf_backward(float* a, size_t n)
+         void logistic_cdf(double *a, size_t n)
+         void logistic_cdff(float *a, size_t n)
+         void swish(double *a, size_t n)
+         void swish_backward(double* a, size_t n)
+         void swishf(float *a, size_t n)
+         void swishf_backward(float* a, size_t n)
          void tanh(double *a, size_t n)
          void tanhf(float *a, size_t n)
 
@@ -51,5 +55,7 @@ cdef class SleefArray:
   cdef void exp(self, reals_ft a, dim_t n)
   cdef void gelu(self, reals_ft a, dim_t n)
   cdef void gelu_backward(self, reals_ft a, dim_t n)
-  cdef void logisticf(self, reals_ft a, dim_t n)
+  cdef void logistic_cdf(self, reals_ft a, dim_t n)
+  cdef void swish(self, reals_ft a, dim_t n)
+  cdef void swish_backward(self, reals_ft a, dim_t n)
   cdef void tanh(self, reals_ft a, dim_t n)

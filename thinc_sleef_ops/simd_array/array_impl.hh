@@ -51,7 +51,7 @@ struct Array : ArrayBase {
   void gelu(double *a, size_t n) noexcept {
     apply_elementwise([](auto a) {
       // GELU(x) = x · Φ(x)
-      auto cdf = Vector<T>::cdf(a);
+      auto cdf = Vector<T>::normal_cdf(a);
       return Vector<T>::mul(a, cdf);
     }, &Array<LOWER_TYPE>::gelu, a, n);
   }
@@ -59,8 +59,8 @@ struct Array : ArrayBase {
   void gelu_backward(double* a, size_t n) noexcept {
     apply_elementwise([](auto a) {
       // GELU'(x) = Φ(x) + x · PDF(x)
-      auto cdf = Vector<T>::cdf(a);
-      auto pdf = Vector<T>::pdf(a);
+      auto cdf = Vector<T>::normal_cdf(a);
+      auto pdf = Vector<T>::normal_pdf(a);
       auto x_pdf = Vector<T>::mul(a, pdf);
       return Vector<T>::add(x_pdf, cdf);
     }, &Array<LOWER_TYPE>::gelu_backward, a, n);
@@ -69,7 +69,7 @@ struct Array : ArrayBase {
   void geluf(float *a, size_t n) noexcept {
     apply_elementwise([](auto a) {
       // GELU(x) = x · Φ(x)
-      auto cdf = Vector<T>::cdff(a);
+      auto cdf = Vector<T>::normal_cdff(a);
       return Vector<T>::mulf(a, cdf);
     }, &Array<LOWER_TYPE>::geluf, a, n);
   }
@@ -77,29 +77,55 @@ struct Array : ArrayBase {
   void geluf_backward(float* a, size_t n) noexcept {
     apply_elementwise([](auto a) {
       // GELU'(x) = Φ(x) + x · PDF(x)
-      auto cdf = Vector<T>::cdff(a);
-      auto pdf = Vector<T>::pdff(a);
+      auto cdf = Vector<T>::normal_cdff(a);
+      auto pdf = Vector<T>::normal_pdff(a);
       auto x_pdf = Vector<T>::mulf(a, pdf);
       return Vector<T>::addf(x_pdf, cdf);
     }, &Array<LOWER_TYPE>::geluf_backward, a, n);
   }
 
-  void logisticf(double *a, size_t n) noexcept {
-    apply_elementwise([](auto a) {
-      auto r = Vector<T>::neg(a);
-      r = Vector<T>::exp(r);
-      r = Vector<T>::add_scalar(r, 1.0);
-      return Vector<T>::recip(r);
-    }, &Array<LOWER_TYPE>::logisticf, a, n);
+  void logistic_cdf(double *a, size_t n) noexcept {
+    apply_elementwise(Vector<T>::logistic_cdf, &Array<LOWER_TYPE>::logistic_cdf, a, n);
   }
 
-  void logisticff(float *a, size_t n) noexcept {
+  void logistic_cdff(float *a, size_t n) noexcept {
+    apply_elementwise(Vector<T>::logistic_cdff, &Array<LOWER_TYPE>::logistic_cdff, a, n);
+  }
+
+  void swish(double *a, size_t n) noexcept {
     apply_elementwise([](auto a) {
-      auto r = Vector<T>::negf(a);
-      r = Vector<T>::expf(r);
-      r = Vector<T>::addf_scalar(r, 1.0);
-      return Vector<T>::recipf(r);
-    }, &Array<LOWER_TYPE>::logisticff, a, n);
+      // swish(x) = x · σ(x)
+      auto cdf = Vector<T>::logistic_cdf(a);
+      return Vector<T>::mul(a, cdf);
+    }, &Array<LOWER_TYPE>::swish, a, n);
+  }
+
+  void swish_backward(double* a, size_t n) noexcept {
+    apply_elementwise([](auto a) {
+      // swish'(x) = σ(x) + x · PDF(x)
+      auto cdf = Vector<T>::logistic_cdf(a);
+      auto pdf = Vector<T>::logistic_pdf(a);
+      auto x_pdf = Vector<T>::mul(a, pdf);
+      return Vector<T>::add(x_pdf, cdf);
+    }, &Array<LOWER_TYPE>::swish_backward, a, n);
+  }
+
+  void swishf(float *a, size_t n) noexcept {
+    apply_elementwise([](auto a) {
+      // swish(x) = x · σ(x)
+      auto cdf = Vector<T>::logistic_cdff(a);
+      return Vector<T>::mulf(a, cdf);
+    }, &Array<LOWER_TYPE>::swishf, a, n);
+  }
+
+  void swishf_backward(float* a, size_t n) noexcept {
+    apply_elementwise([](auto a) {
+      // swish'(x) = σ(x) + x · PDF(x)
+      auto cdf = Vector<T>::logistic_cdff(a);
+      auto pdf = Vector<T>::logistic_pdff(a);
+      auto x_pdf = Vector<T>::mulf(a, pdf);
+      return Vector<T>::addf(x_pdf, cdf);
+    }, &Array<LOWER_TYPE>::swishf_backward, a, n);
   }
 
   void tanh(double *a, size_t n) noexcept {
