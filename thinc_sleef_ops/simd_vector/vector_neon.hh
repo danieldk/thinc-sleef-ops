@@ -18,97 +18,100 @@ struct Vector<NEON> {
 
   typedef Scalar LOWER_TYPE;
 
-  static void add(double *a, double v) noexcept {
-    with_load_store([=](DOUBLE_TYPE a){
-      DOUBLE_TYPE v_simd = vdupq_n_f64(v);
-      return vaddq_f64(a, v_simd);
-    }, a);
+  static DOUBLE_TYPE add_scalar(DOUBLE_TYPE a, double b) noexcept {
+    DOUBLE_TYPE v_simd = vdupq_n_f64(b);
+    return vaddq_f64(a, v_simd);
   }
 
-  static void add(double *a, double *v) noexcept {
-    with_load_load_store(vaddq_f64, a, v);
+  static DOUBLE_TYPE add(DOUBLE_TYPE a, DOUBLE_TYPE b) noexcept {
+    return vaddq_f64(a, b);
   }
 
-  static void addf(float *a, float v) noexcept {
-    with_load_store([=](FLOAT_TYPE a){
-      FLOAT_TYPE v_simd = vdupq_n_f32(v);
-      return vaddq_f32(a, v_simd);
-    }, a);
+  static FLOAT_TYPE addf_scalar(FLOAT_TYPE a, float b) noexcept {
+    FLOAT_TYPE v_simd = vdupq_n_f32(b);
+    return vaddq_f32(a, v_simd);
   }
 
-  static void addf(float *a, float *v) noexcept {
-    with_load_load_store(vaddq_f32, a, v);
+  static FLOAT_TYPE addf(FLOAT_TYPE a, FLOAT_TYPE b) noexcept {
+    return vaddq_f32(a, b);
   }
 
-  static void erf(double *a) noexcept {
-    with_load_store(Sleef_erfd2_u10, a);
+  static DOUBLE_TYPE cdf(DOUBLE_TYPE a) {
+    return generic_cdf<NEON>(a);
   }
 
-  static void erff(float *a) noexcept {
-    with_load_store(Sleef_erff4_u10, a);
+  static FLOAT_TYPE cdff(FLOAT_TYPE a) {
+    return generic_cdff<NEON>(a);
   }
 
-  static void exp(double *a) noexcept {
-    with_load_store(Sleef_expd2_u10, a);
+  static DOUBLE_TYPE erf(DOUBLE_TYPE a) noexcept {
+    return Sleef_erfd2_u10(a);
   }
 
-  static void expf(float *a) noexcept {
-    with_load_store(Sleef_expf4_u10, a);
+  static FLOAT_TYPE erff(FLOAT_TYPE a) noexcept {
+    return Sleef_erff4_u10(a);
   }
 
-  static void mul(double *a, double v) noexcept {
-    with_load_store([=](DOUBLE_TYPE a){
-      DOUBLE_TYPE v_simd = vdupq_n_f64(v);
-      return vmulq_f64(a, v_simd);
-    }, a);
+  static DOUBLE_TYPE exp(DOUBLE_TYPE a) noexcept {
+    return Sleef_expd2_u10(a);
   }
 
-  static void mul(double *a, double *v) noexcept {
-    with_load_load_store(vmulq_f64, a, v);
+  static FLOAT_TYPE expf(FLOAT_TYPE a) noexcept {
+    return Sleef_expf4_u10(a);
   }
 
-  static void mulf(float *a, float v) noexcept {
-    with_load_store([v](FLOAT_TYPE a){
-      FLOAT_TYPE v_simd = vdupq_n_f32(v);
-      return vmulq_f32(a, v_simd);
-    }, a);
+  static DOUBLE_TYPE mul(DOUBLE_TYPE a, DOUBLE_TYPE b) noexcept {
+    return vmulq_f64(a, b);
   }
 
-  static void mulf(float *a, float *v) noexcept {
-    with_load_load_store(vmulq_f32, a, v);
+  static DOUBLE_TYPE mul_scalar(FLOAT_TYPE a, double b) noexcept {
+    DOUBLE_TYPE v_simd = vdupq_n_f64(b);
+    return vmulq_f64(a, v_simd);
   }
 
-  static void neg(double *a) noexcept {
-    with_load_store(vnegq_f64, a);
+  static FLOAT_TYPE mulf(FLOAT_TYPE a, FLOAT_TYPE b) noexcept {
+    return vmulq_f32(a, b);
   }
 
-  static void negf(float *a) noexcept {
-    with_load_store(vnegq_f32, a);
+  static FLOAT_TYPE mulf_scalar(FLOAT_TYPE a, float b) noexcept {
+    FLOAT_TYPE v_simd = vdupq_n_f32(b);
+    return vmulq_f32(a, v_simd);
   }
 
-  static void recip(double *a) noexcept {
-    with_load_store([=](DOUBLE_TYPE a){
-      DOUBLE_TYPE one = vdupq_n_f64(1);
-      return vdivq_f64(one, a);
-    }, a);
+  static DOUBLE_TYPE neg(DOUBLE_TYPE a) noexcept {
+    return vnegq_f64(a);
   }
 
-  static void recipf(float *a) noexcept {
-    with_load_store([=](FLOAT_TYPE a){
-      FLOAT_TYPE one = vdupq_n_f32(1);
-      return vdivq_f32(one, a);
-    }, a);
+  static FLOAT_TYPE negf(FLOAT_TYPE a) noexcept {
+    return vnegq_f32(a);
   }
 
-  static void tanh(double *a) noexcept {
-    with_load_store(Sleef_tanhd2_u10, a);
+  static DOUBLE_TYPE pdf(DOUBLE_TYPE a) {
+    return generic_pdf<NEON>(a);
   }
 
-  static void tanhf(float *a) noexcept {
-    with_load_store(Sleef_tanhf4_u10, a);
+  static FLOAT_TYPE pdff(FLOAT_TYPE a) {
+    return generic_pdff<NEON>(a);
   }
 
-private:
+  static DOUBLE_TYPE recip(DOUBLE_TYPE a) noexcept {
+    DOUBLE_TYPE one = vdupq_n_f64(1);
+    return vdivq_f64(one, a);
+  }
+
+  static FLOAT_TYPE recipf(FLOAT_TYPE a) noexcept {
+    FLOAT_TYPE one = vdupq_n_f32(1);
+    return vdivq_f32(one, a);
+  }
+
+  static DOUBLE_TYPE tanh(DOUBLE_TYPE a) noexcept {
+    return Sleef_tanhd2_u10(a);
+  }
+
+  static FLOAT_TYPE tanhf(FLOAT_TYPE a) noexcept {
+    return Sleef_tanhf4_u10(a);
+  }
+
   template <class F>
   static void with_load_store(F f, float *a) noexcept {
     FLOAT_TYPE val = vld1q_f32(a);
@@ -121,22 +124,6 @@ private:
     DOUBLE_TYPE val = vld1q_f64(a);
     val = f(val);
     vst1q_f64(a, val);
-  }
-
-  template <class F>
-  static void with_load_load_store(F f, double *a, double *b) noexcept {
-    DOUBLE_TYPE val_a = vld1q_f64(a);
-    DOUBLE_TYPE val_b = vld1q_f64(b);
-    val_a = f(val_a, val_b);
-    vst1q_f64(a, val_a);
-  }
-
-  template <class F>
-  static void with_load_load_store(F f, float *a, float *b) noexcept {
-    FLOAT_TYPE val_a = vld1q_f32(a);
-    FLOAT_TYPE val_b = vld1q_f32(b);
-    val_a = f(val_a, val_b);
-    vst1q_f32(a, val_a);
   }
 };
 

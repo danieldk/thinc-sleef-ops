@@ -29,38 +29,22 @@
 
 template <class T>
 struct Array : ArrayBase {
+  typedef typename Vector<T>::DOUBLE_TYPE DOUBLE_TYPE;
   static size_t const N_DOUBLE = Vector<T>::N_DOUBLE;
+
+  typedef typename Vector<T>::FLOAT_TYPE FLOAT_TYPE;
   static size_t const N_FLOAT = Vector<T>::N_FLOAT;
+
   typedef typename Vector<T>::LOWER_TYPE LOWER_TYPE;
-
-  void add(double *a, size_t n, double v) noexcept {
-    apply_elementwise([v](double *a) { Vector<T>::add(a, v); }, [v](double *a, size_t n) { return Array<LOWER_TYPE>().add(a, n, v); }, a, n);
-  }
-
-  void add(double *a, double *v, size_t n) noexcept {
-    apply_pairwise([](double *a, double *b) { return Vector<T>::add(a, b); },
-                   [](double *a, double *v, size_t n) { return Array<LOWER_TYPE>().add(a, v, n); },
-                   a, v, n);
-  }
-
-  void addf(float *a, size_t n, float v) noexcept {
-    apply_elementwise([v](float *a) { Vector<T>::addf(a, v); }, [v](float *a, size_t n) { return Array<LOWER_TYPE>().addf(a, n, v); }, a, n);
-  }
-
-  void addf(float *a, float *v, size_t n) noexcept {
-    apply_pairwise([](float *a, float *b) { return Vector<T>::addf(a, b); },
-                   [](float *a, float *v, size_t n) { return Array<LOWER_TYPE>().addf(a, v, n); },
-                   a, v, n);
-  }
 
   void cdf(double *a, size_t n) noexcept {
     // Φ(x) = 1/2[1 + erf(x/sqrt(2))]
     apply_elementwise(
-      [](double *a) {
-        Vector<T>::mul(a, M_SQRT1_2);
-        Vector<T>::erf(a);
-        Vector<T>::add(a, 1.0);
-        Vector<T>::mul(a, 0.5);
+      [](DOUBLE_TYPE a) {
+        auto r = Vector<T>::mul_scalar(a, M_SQRT1_2);
+        r = Vector<T>::erf(r);
+        r = Vector<T>::add_scalar(r, 1.0);
+        return Vector<T>::mul_scalar(r, 0.5);
       },
       [](double *a, size_t n) { return Array<LOWER_TYPE>().cdf(a, n); },
       a, n
@@ -70,12 +54,7 @@ struct Array : ArrayBase {
   void cdff(float *a, size_t n) noexcept {
     // Φ(x) = 1/2[1 + erf(x/sqrt(2))]
     apply_elementwise(
-      [](float *a) {
-        Vector<T>::mulf(a, M_SQRT1_2);
-        Vector<T>::erff(a);
-        Vector<T>::addf(a, 1.0);
-        Vector<T>::mulf(a, 0.5);
-      },
+      Vector<T>::cdff,
       [](float *a, size_t n) { return Array<LOWER_TYPE>().cdff(a, n); },
       a, n
     );
@@ -83,11 +62,11 @@ struct Array : ArrayBase {
 
   void pdf(double *a, size_t n) noexcept {
     apply_elementwise(
-      [](double *a) {
-        Vector<T>::mul(a, a);
-        Vector<T>::mul(a, -0.5);
-        Vector<T>::exp(a);
-        Vector<T>::mul(a, M_1_SQRT_2PI);
+      [](DOUBLE_TYPE a) {
+        auto r = Vector<T>::mul(a, a);
+        r = Vector<T>::mul_scalar(r, -0.5);
+        r = Vector<T>::exp(r);
+        return Vector<T>::mul_scalar(r, M_1_SQRT_2PI);
       },
       [](double *a, size_t n) { return Array<LOWER_TYPE>().pdf(a, n); },
       a, n
@@ -96,12 +75,7 @@ struct Array : ArrayBase {
 
   void pdff(float *a, size_t n) noexcept {
     apply_elementwise(
-      [](float *a) {
-        Vector<T>::mulf(a, a);
-        Vector<T>::mulf(a, -0.5);
-        Vector<T>::expf(a);
-        Vector<T>::mulf(a, M_1_SQRT_2PI);
-      },
+      Vector<T>::pdff,
       [](float *a, size_t n) { return Array<LOWER_TYPE>().pdff(a, n); },
       a, n
     );
@@ -124,101 +98,57 @@ struct Array : ArrayBase {
   }
 
   void gelu(double *a, size_t n) noexcept {
-    std::vector<double> cdf(a, a + n);
-    Array<T>::cdf(cdf.data(), n);
-    Array<T>::mul(a, cdf.data(), n);
+    apply_elementwise([](DOUBLE_TYPE a) {
+      // GELU(x) = x · Φ(x)
+      auto cdf = Vector<T>::cdf(a);
+      return Vector<T>::mul(a, cdf);
+    }, [](double *a, size_t n) { return Array<LOWER_TYPE>().gelu(a, n); }, a, n);
   }
 
   void gelu_backward(double* a, size_t n) noexcept {
-    // Φ(x)
-    std::vector<double> cdf(a, a + n);
-    Array<T>::cdf(cdf.data(), n);
-
-    // PDF(x)
-    std::vector<double> pdf(a, a + n);
-    Array<T>::pdf(pdf.data(), n);
-
-    // a = x · PDF(x)
-    Array<T>::mul(a, pdf.data(), n);
-
-    // a = Φ(x) + x · PDF(x)
-    Array<T>::add(a, cdf.data(), n);
+    apply_elementwise([](DOUBLE_TYPE a) {
+      // GELU'(x) = Φ(x) + x · PDF(x)
+      auto cdf = Vector<T>::cdf(a);
+      auto pdf = Vector<T>::pdf(a);
+      auto x_pdf = Vector<T>::mul(a, pdf);
+      return Vector<T>::add(x_pdf, cdf);
+    }, [](double *a, size_t n) { return Array<LOWER_TYPE>().gelu_backward(a, n); }, a, n);
   }
 
   void geluf(float *a, size_t n) noexcept {
-    std::vector<float> cdf(a, a + n);
-    Array<T>::cdff(cdf.data(), n);
-    Array<T>::mulf(a, cdf.data(), n);
+    apply_elementwise([](FLOAT_TYPE a) {
+      // GELU(x) = x · Φ(x)
+      auto cdf = Vector<T>::cdff(a);
+      return Vector<T>::mulf(a, cdf);
+    }, [](float *a, size_t n) { return Array<LOWER_TYPE>().geluf(a, n); }, a, n);
   }
 
   void geluf_backward(float* a, size_t n) noexcept {
-    // Φ(x)
-    std::vector<float> cdf(a, a + n);
-    Array<T>::cdff(cdf.data(), n);
-
-    // PDF(x)
-    std::vector<float> pdf(a, a + n);
-    Array<T>::pdff(pdf.data(), n);
-
-    // a = x · PDF(x)
-    Array<T>::mulf(a, pdf.data(), n);
-
-    // a = Φ(x) + x · PDF(x)
-    Array<T>::addf(a, cdf.data(), n);
+    apply_elementwise([](FLOAT_TYPE a) {
+      // GELU'(x) = Φ(x) + x · PDF(x)
+      auto cdf = Vector<T>::cdff(a);
+      auto pdf = Vector<T>::pdff(a);
+      auto x_pdf = Vector<T>::mulf(a, pdf);
+      return Vector<T>::addf(x_pdf, cdf);
+    }, [](float *a, size_t n) { return Array<LOWER_TYPE>().geluf_backward(a, n); }, a, n);
   }
 
   void logisticf(double *a, size_t n) noexcept {
-    Array<T>::neg(a, n);
-    Array<T>::exp(a, n);
-    Array<T>::add(a, n, 1.0);
-    Array<T>::recip(a, n);
+    apply_elementwise([](DOUBLE_TYPE a) {
+      auto r = Vector<T>::neg(a);
+      r = Vector<T>::exp(r);
+      r = Vector<T>::add_scalar(r, 1.0);
+      return Vector<T>::recip(r);
+    }, [](double *a, size_t n) { return Array<LOWER_TYPE>().logisticf(a, n); }, a, n);
   }
 
   void logisticff(float *a, size_t n) noexcept {
-    Array<T>::negf(a, n);
-    Array<T>::expf(a, n);
-    Array<T>::addf(a, n, 1.0);
-    Array<T>::recipf(a, n);
-  }
-
-  void mul(double *a, size_t n, double v) noexcept {
-    apply_elementwise([v](double *a) { Vector<T>::mul(a, v); }, [v](double *a, size_t n) { return Array<LOWER_TYPE>().mul(a, n, v); }, a, n);
-  }
-
-  void mul(double *a, size_t n, double *v) noexcept {
-    apply_elementwise([v](double *a) { Vector<T>::mul(a, v); }, [v](double *a, size_t n) { return Array<LOWER_TYPE>().mul(a, n, v); }, a, n);
-  }
-
-  void mul(double *a, double *v, size_t n) noexcept {
-    apply_pairwise([](double *a, double *b) { return Vector<T>::mul(a, b); },
-                   [](double *a, double *v, size_t n) { return Array<LOWER_TYPE>().mul(a, v, n); },
-                   a, v, n);
-  }
-
-  void mulf(float *a, size_t n, float v) noexcept {
-    apply_elementwise([v](float *a) { Vector<T>::mulf(a, v); }, [v](float *a, size_t n) { return Array<LOWER_TYPE>().mulf(a, n, v); }, a, n);
-  }
-
-  void mulf(float *a, float *v, size_t n) noexcept {
-    apply_pairwise([](float *a, float *b) { return Vector<T>::mulf(a, b); },
-                   [](float *a, float *v, size_t n) { return Array<LOWER_TYPE>().mulf(a, v, n); },
-                   a, v, n);
-  }
-
-  void neg(double *a, size_t n) noexcept {
-    apply_elementwise(Vector<T>::neg, [](double *a, size_t n) { return Array<LOWER_TYPE>().neg(a, n); }, a, n);
-  }
-
-  void negf(float *a, size_t n) noexcept {
-    apply_elementwise(Vector<T>::negf, [](float *a, size_t n) { return Array<LOWER_TYPE>().negf(a, n); }, a, n);
-  }
-
-  void recip(double *a, size_t n) noexcept {
-    apply_elementwise(Vector<T>::recip, [](double *a, size_t n) { return Array<LOWER_TYPE>().recip(a, n); }, a, n);
-  }
-
-  void recipf(float *a, size_t n) noexcept {
-    apply_elementwise(Vector<T>::recipf, [](float *a, size_t n) { return Array<LOWER_TYPE>().recipf(a, n); }, a, n);
+    apply_elementwise([](FLOAT_TYPE a) {
+      auto r = Vector<T>::negf(a);
+      r = Vector<T>::expf(r);
+      r = Vector<T>::addf_scalar(r, 1.0);
+      return Vector<T>::recipf(r);
+    }, [](float *a, size_t n) { return Array<LOWER_TYPE>().logisticff(a, n); }, a, n);
   }
 
   void tanh(double *a, size_t n) noexcept {
@@ -234,7 +164,7 @@ private:
   static void apply_elementwise(F f, G f_rest, float *a, size_t n) {
     size_t upper = n - (n % N_FLOAT);
     for (float *cur = a; cur != a + upper; cur += N_FLOAT) {
-      f(cur);
+      Vector<T>::with_load_store(f, cur);
     }
 
     if (upper != n) {
@@ -246,35 +176,11 @@ private:
   static void apply_elementwise(F f, G f_rest, double *a, size_t n) {
     size_t upper = n - (n % N_DOUBLE);
     for (double *cur = a; cur != a + upper; cur += N_DOUBLE) {
-      f(cur);
+      Vector<T>::with_load_store(f, cur);
     }
 
     if (upper != n) {
       f_rest(a + upper, n - upper);
-    }
-  }
-
-  template <class F, class G>
-  static void apply_pairwise(F f, G f_rest, double *a, double *b, size_t n) {
-    size_t upper = n - (n % N_DOUBLE);
-    for (double *cur_a = a, *cur_b = b; cur_a != a + upper; cur_a += N_DOUBLE, cur_b += N_DOUBLE) {
-      f(cur_a, cur_b);
-    }
-
-    if (upper != n) {
-      f_rest(a + upper, b + upper, n - upper);
-    }
-  }
-
-  template <class F, class G>
-  static void apply_pairwise(F f, G f_rest, float *a, float *b, size_t n) {
-    size_t upper = n - (n % N_FLOAT);
-    for (float *cur_a = a, *cur_b = b; cur_a != a + upper; cur_a += N_FLOAT, cur_b += N_FLOAT) {
-      f(cur_a, cur_b);
-    }
-
-    if (upper != n) {
-      f_rest(a + upper, b + upper, n - upper);
     }
   }
 };
