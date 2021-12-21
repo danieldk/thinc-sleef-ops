@@ -1,10 +1,16 @@
 #ifndef VECTOR_SSE_HH
 #define VECTOR_SSE_HH
 
-#include <sleef.h>
-
 #include <cstddef>
 #include <functional>
+
+#include <sleef.h>
+
+#if defined(_MSC_VER)
+#include <intrin.h>
+#else
+#include <x86intrin.h>
+#endif
 
 #include "vector.hh"
 
