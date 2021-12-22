@@ -5,6 +5,9 @@ import pytest
 
 from thinc_sleef_ops import InstructionSet, SleefOps, with_cpu_feature
 
+# Trigger at least one back-off to a more narrow instruction set.
+N_INPUT_ELEMS = 61
+
 M_SQRT1_2 = 1.0 / math.sqrt(2.0)
 M_1_SQRT_2PI = 1.0 / math.sqrt(2.0 * math.pi)
 
@@ -25,6 +28,11 @@ def numpy_cdf(x):
 
 def numpy_pdf(x):
     return M_1_SQRT_2PI * np.exp(-0.5 * x ** 2)
+
+
+@pytest.fixture
+def inputs():
+    return np.random.randn(N_INPUT_ELEMS) * 10
 
 
 @pytest.fixture
@@ -52,15 +60,14 @@ def check_elementwise_function(
 @pytest.mark.parametrize("cpu_feature", SleefOps.instruction_sets())
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
 @pytest.mark.parametrize("inplace", [True, False])
-def test_exp(ops, cpu_feature, dtype, inplace):
-    inputs = np.arange(-10, 10, 0.5, dtype=dtype)
+def test_exp(ops, cpu_feature, dtype, inplace, inputs):
     check_elementwise_function("exp", np.exp, cpu_feature, dtype, inplace, inputs)
 
 
 @pytest.mark.parametrize("cpu_feature", SleefOps.instruction_sets())
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
 @pytest.mark.parametrize("inplace", [True, False])
-def test_erff(ops, cpu_feature, dtype, inplace):
+def test_erff_torch(ops, cpu_feature, dtype, inplace):
     ERF_CHECK = np.array(
         [
             -1.0000,
@@ -89,8 +96,7 @@ def test_erff(ops, cpu_feature, dtype, inplace):
 @pytest.mark.parametrize("cpu_feature", SleefOps.instruction_sets())
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
 @pytest.mark.parametrize("inplace", [True, False])
-def test_gelu(ops, cpu_feature, dtype, inplace):
-    inputs = np.arange(-10, 10, 0.5, dtype=dtype)
+def test_gelu(ops, cpu_feature, dtype, inplace, inputs):
     check_elementwise_function(
         "gelu",
         lambda x: x * numpy_cdf(x),
@@ -104,8 +110,7 @@ def test_gelu(ops, cpu_feature, dtype, inplace):
 @pytest.mark.parametrize("cpu_feature", SleefOps.instruction_sets())
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
 @pytest.mark.parametrize("inplace", [True, False])
-def test_gelu_backward(ops, cpu_feature, dtype, inplace):
-    inputs = np.arange(-10, 10, 0.5, dtype=dtype)
+def test_gelu_backward(ops, cpu_feature, dtype, inplace, inputs):
     check_elementwise_function(
         "gelu_backward",
         lambda x: numpy_cdf(x) + x * numpy_pdf(x),
@@ -144,8 +149,7 @@ def test_gelu_backward_torch(ops, cpu_feature, dtype, inplace):
 @pytest.mark.parametrize("cpu_feature", SleefOps.instruction_sets())
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
 @pytest.mark.parametrize("inplace", [True, False])
-def test_sigmoid(ops, cpu_feature, dtype, inplace):
-    inputs = np.arange(-10, 10, 0.5, dtype=dtype)
+def test_sigmoid(ops, cpu_feature, dtype, inplace, inputs):
     check_elementwise_function(
         "sigmoid",
         numpy_logistic_cdf,
@@ -159,8 +163,7 @@ def test_sigmoid(ops, cpu_feature, dtype, inplace):
 @pytest.mark.parametrize("cpu_feature", SleefOps.instruction_sets())
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
 @pytest.mark.parametrize("inplace", [True, False])
-def test_swish(ops, cpu_feature, dtype, inplace):
-    inputs = np.arange(-10, 10, 0.5, dtype=dtype)
+def test_swish(ops, cpu_feature, dtype, inplace, inputs):
     check_elementwise_function(
         "swish",
         lambda x: x * numpy_logistic_cdf(x),
@@ -174,8 +177,7 @@ def test_swish(ops, cpu_feature, dtype, inplace):
 @pytest.mark.parametrize("cpu_feature", SleefOps.instruction_sets())
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
 @pytest.mark.parametrize("inplace", [True, False])
-def test_swish_backward(ops, cpu_feature, dtype, inplace):
-    inputs = np.arange(-10, 10, 0.5, dtype=dtype)
+def test_swish_backward(ops, cpu_feature, dtype, inplace, inputs):
     check_elementwise_function(
         "swish_backward",
         lambda x: numpy_logistic_cdf(x) + x * numpy_logistic_pdf(x),
@@ -219,6 +221,5 @@ def test_swish_backward_torch(ops, cpu_feature, dtype, inplace):
 @pytest.mark.parametrize("cpu_feature", SleefOps.instruction_sets())
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
 @pytest.mark.parametrize("inplace", [True, False])
-def test_tanh(ops, cpu_feature, dtype, inplace):
-    inputs = np.arange(-10, 10, 0.5, dtype=dtype)
+def test_tanh(ops, cpu_feature, dtype, inplace, inputs):
     check_elementwise_function("tanh", np.tanh, cpu_feature, dtype, inplace, inputs)
