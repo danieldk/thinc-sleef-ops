@@ -1,0 +1,13 @@
+# Build dependencies
+cmake
+cython<3.0
+ninja
+numpy
+scikit-build
+wheel
+
+# Runtime dependencies
+thinc
+
+# Test dependencies
+pytest
