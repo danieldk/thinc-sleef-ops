@@ -7,10 +7,16 @@ cimport numpy as np
 import numpy as np
 from thinc.api import Ops
 
+try:
+    from thinc_apple_ops import AppleOps
+    ops_superclass = AppleOps
+except ImportError:
+    ops_superclass = Ops
+
 from .sleef_array cimport InstructionSet, SleefArray
 from .sleef_array import with_cpu_feature as sleef_with_cpu_feature
 
-class SleefOps(Ops):
+class SleefOps(ops_superclass):
     def __init__(self):
         self._array = SleefArray()
 
