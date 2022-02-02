@@ -26,12 +26,13 @@ class SleefOps(ops_superclass):
 
     def erf(self, a: np.ndarray, *, inplace: bool=False):
         cdef SleefArray array = self._array
+        cdef size_t n = a.size
 
         a = self._to_contig_or_copy(a, inplace=inplace)
         if a.dtype == np.float32:
-            array.erf(<float *> a.data, len(a))
+            array.erf(<float *> a.data, n)
         elif a.dtype == np.float64:
-            array.erf(<double *> a.data, len(a))
+            array.erf(<double *> a.data, n)
         else:
             raise TypeError("Unhandled array dtype")
 
@@ -39,12 +40,13 @@ class SleefOps(ops_superclass):
 
     def exp(self, np.ndarray a, *, inplace: bool=False):
         cdef SleefArray array = self._array
+        cdef size_t n = a.size
 
         a = self._to_contig_or_copy(a, inplace=inplace)
         if a.dtype == np.float32:
-            array.exp(<float *> a.data, len(a))
+            array.exp(<float *> a.data, n)
         elif a.dtype == np.float64:
-            array.exp(<double *> a.data, len(a))
+            array.exp(<double *> a.data, n)
         else:
             raise TypeError("Unhandled array dtype")
 
@@ -52,12 +54,13 @@ class SleefOps(ops_superclass):
 
     def gelu(self, np.ndarray a, *, inplace: bool=False):
         cdef SleefArray array = self._array
+        cdef size_t n = a.size
 
         a = self._to_contig_or_copy(a, inplace=inplace)
         if a.dtype == np.float32:
-            array.gelu(<float *> a.data, len(a))
+            array.gelu(<float *> a.data, n)
         elif a.dtype == np.float64:
-            array.gelu(<double *> a.data, len(a))
+            array.gelu(<double *> a.data, n)
         else:
             raise TypeError("Unhandled array dtype")
 
@@ -65,12 +68,13 @@ class SleefOps(ops_superclass):
 
     def gelu_backward(self, np.ndarray a, *, inplace: bool=False):
         cdef SleefArray array = self._array
+        cdef size_t n = a.size
 
         a = self._to_contig_or_copy(a, inplace=inplace)
         if a.dtype == np.float32:
-            array.gelu_backward(<float *> a.data, len(a))
+            array.gelu_backward(<float *> a.data, n)
         elif a.dtype == np.float64:
-            array.gelu_backward(<double *> a.data, len(a))
+            array.gelu_backward(<double *> a.data, n)
         else:
             raise TypeError("Unhandled array dtype")
 
@@ -78,12 +82,13 @@ class SleefOps(ops_superclass):
 
     def sigmoid(self, np.ndarray a, *, inplace: bool=False):
         cdef SleefArray array = self._array
+        cdef size_t n = a.size
 
         a = self._to_contig_or_copy(a, inplace=inplace)
         if a.dtype == np.float32:
-            array.logistic_cdf(<float *> a.data, len(a))
+            array.logistic_cdf(<float *> a.data, n)
         elif a.dtype == np.float64:
-            array.logistic_cdf(<double *> a.data, len(a))
+            array.logistic_cdf(<double *> a.data, n)
         else:
             raise TypeError("Unhandled array dtype")
 
@@ -91,12 +96,13 @@ class SleefOps(ops_superclass):
 
     def swish(self, np.ndarray a, *, inplace: bool=False):
         cdef SleefArray array = self._array
+        cdef size_t n = a.size
 
         a = self._to_contig_or_copy(a, inplace=inplace)
         if a.dtype == np.float32:
-            array.swish(<float *> a.data, len(a))
+            array.swish(<float *> a.data, n)
         elif a.dtype == np.float64:
-            array.swish(<double *> a.data, len(a))
+            array.swish(<double *> a.data, n)
         else:
             raise TypeError("Unhandled array dtype")
 
@@ -104,12 +110,13 @@ class SleefOps(ops_superclass):
 
     def swish_backward(self, np.ndarray a, *, inplace: bool=False):
         cdef SleefArray array = self._array
+        cdef size_t n = a.size
 
         a = self._to_contig_or_copy(a, inplace=inplace)
         if a.dtype == np.float32:
-            array.swish_backward(<float *> a.data, len(a))
+            array.swish_backward(<float *> a.data, n)
         elif a.dtype == np.float64:
-            array.swish_backward(<double *> a.data, len(a))
+            array.swish_backward(<double *> a.data, n)
         else:
             raise TypeError("Unhandled array dtype")
 
@@ -117,12 +124,13 @@ class SleefOps(ops_superclass):
 
     def tanh(self, np.ndarray a, *, inplace: bool=False):
         cdef SleefArray array = self._array
+        cdef size_t n = a.size
 
         a = self._to_contig_or_copy(a, inplace=inplace)
         if a.dtype == np.float32:
-            array.tanh(<float *> a.data, len(a))
+            array.tanh(<float *> a.data, n)
         elif a.dtype == np.float64:
-            array.tanh(<double *> a.data, len(a))
+            array.tanh(<double *> a.data, n)
         else:
             raise TypeError("Unhandled array dtype")
 
