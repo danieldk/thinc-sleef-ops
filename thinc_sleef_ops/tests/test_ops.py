@@ -27,6 +27,14 @@ def numpy_pdf(x):
     return M_1_SQRT_2PI * np.exp(-0.5 * x**2)
 
 
+def numpy_softmax(x):
+    maxes = np.max(x, axis=-1, keepdims=True)
+    shifted = x - maxes
+    new_x = np.exp(shifted)
+    new_x /= new_x.sum(axis=-1, keepdims=True)
+    return new_x
+
+
 def test_inputs():
     return [
         # Trigger at least one back-off to a more narrow instruction set.
@@ -158,6 +166,21 @@ def test_sigmoid(ops, cpu_feature, dtype, inplace, X):
     check_elementwise_function(
         "sigmoid",
         numpy_logistic_cdf,
+        cpu_feature,
+        dtype,
+        inplace,
+        X,
+    )
+
+
+@pytest.mark.parametrize("cpu_feature", SleefOps.instruction_sets())
+@pytest.mark.parametrize("dtype", [np.float32, np.float64])
+@pytest.mark.parametrize("inplace", [True, False])
+@pytest.mark.parametrize("X", test_inputs())
+def test_softmax(ops, cpu_feature, dtype, inplace, X):
+    check_elementwise_function(
+        "softmax",
+        numpy_softmax,
         cpu_feature,
         dtype,
         inplace,

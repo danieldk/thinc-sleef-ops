@@ -94,6 +94,18 @@ class SleefOps(ops_superclass):
 
         return a
 
+    def softmax(self, np.ndarray x, *, axis=-1, inplace=False):
+        # Todo: vectorize max using SLEEF?
+        maxes = self.xp.max(x, axis=axis, keepdims=True)
+        if inplace:
+            out = x
+        else:
+            out = np.copy(x)
+        out -= maxes
+        self.exp(out, inplace=True)
+        out /= out.sum(axis=axis, keepdims=True)
+        return out
+
     def swish(self, np.ndarray a, *, inplace: bool=False):
         cdef SleefArray array = self._array
         cdef size_t n = a.size
